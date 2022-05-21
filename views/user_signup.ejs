@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/signup.css">
+</head>
+<body>
+     
+<div class="container">
+    <h1>Please login to continue</h1>
+<form action="/user/create_user" method="post">
+   <div class="fields">
+    <div class="chip">
+        <p>Name</p>
+        <input type="text" name="name" id="sname" required>
+    </div>
+
+   <div class="chip">
+    <p>email</p>
+    <input type="email" name="email" id="semail" required>
+    
+   </div>
+   <div class="chip">
+    <p>password</p>
+   <input type="password" name="password" id="spwd" required>
+   
+  </div>
+
+   <div class="chip">
+    <p>confirm password</p>
+    <input type="password" name="confirmpassword" " required>    
+   </div>
+
+   </div>
+<div class="btn">
+    <button type="submit">sign up</button>
+</div>
+</form>
+</body>
+</html>

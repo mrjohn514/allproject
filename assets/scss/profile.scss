@@ -1,0 +1,60 @@
+body{
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva;   
+    margin: 0;
+}
+
+
+h1,p{
+    margin: 0;
+    font-size: 1.8rem;
+    color: rgb(255, 255, 255);
+}
+
+
+a{
+    text-decoration: none;
+    font-size: 1.3rem;
+    margin: 0px 5px;
+    color: white;
+}
+
+header{
+    position: sticky;
+    top: 0;;
+}
+
+.navbar{
+    height: 55px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(104deg, rgba(45,44,46,1) 11%, rgba(127,126,130,1) 86%, rgba(1,15,19,1) 99%);
+}
+
+
+.content{
+    box-sizing: border-box;
+      height: 800px;
+      background-image: url("https://wallpaperaccess.com/full/902615.png");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size:cover;
+
+    border: 5px solid green;
+    }
+
+
+
+    
+.footercontainer{
+    // border: 1px solid red;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 55px;
+    background: linear-gradient(104deg, rgba(27,36,103,1) 11%, rgba(202,195,224,1) 86%, rgba(45,53,158,1) 99%);
+
+     a{
+         font-size: 1.5rem;
+     }
+}

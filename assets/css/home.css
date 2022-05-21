@@ -1,0 +1,43 @@
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva;
+  margin: 0; }
+
+h1, p {
+  margin: 0;
+  font-size: 1.8rem;
+  color: white; }
+
+a {
+  text-decoration: none;
+  font-size: 1.3rem;
+  margin: 0px 5px;
+  color: white; }
+
+header {
+  position: sticky;
+  top: 0; }
+
+.navbar {
+  height: 55px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(104deg, #2d2c2e 11%, #7f7e82 86%, #010f13 99%); }
+
+.content {
+  text-align: center;
+  box-sizing: border-box;
+  height: 700px;
+  background-image: url("https://assets.justinmind.com/wp-content/uploads/2020/02/website-background-design-guide-768x492.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; }
+
+.footercontainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 55px;
+  background: linear-gradient(104deg, #1b2467 11%, #cac3e0 86%, #2d359e 99%); }
+  .footercontainer a {
+    font-size: 1.5rem; }

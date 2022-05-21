@@ -1,0 +1,43 @@
+<header>
+    <div class="navbar">
+        <div class="left">
+        <h1>codeial</h1>
+        </div>
+        
+        <div class="right">
+            <% if(locals.user){%>
+        <a href="/user/signin"><span><i class="fas fa-user"></i></span><%=user.name%></a>
+        <a href="/user/signout">signout</a>
+
+        <%}else{%>
+        <a href="/user/signin">signin</a>  
+        <a href="/user/signup">signup</a>
+
+        <%}%>
+        </div>
+        
+        </div>
+
+<!-- 
+<ul>
+    <% if(locals.user){%>
+    <li><%=user.name%></li>
+    <li>
+    <a href="/user/signout">signout</a>
+    </li>
+    
+    <%}else{%>
+    
+        <li>
+          <a href="/user/signin">signin</a>  
+        </li>
+        <li>
+            <a href="/user/signup">signup</a>
+        </li>
+    <%}%>
+    
+    
+    </ul> -->
+
+
+</header>
