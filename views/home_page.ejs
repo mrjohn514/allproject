@@ -3,5 +3,22 @@
 <section >
     <div class="content">
         <h1>codeial/homepage</h1>
+        <%if(locals.user){%>
+        <form action="/post/createpost" method="post">
+            <textarea name="content"  cols="30" rows="3"></textarea>
+            <input type="submit" value="post">
+            <%}%>
     </div>
+</section>
+
+<section>
+
+    <div class="post">
+        <%for(i of posts){%>
+        <div class="card">
+         <p><%=i.content%></p>
+         <p class="uname">By:<%=i.user.name%></p>   
+        </div>
+        <%}%>
+        </div>
 </section>
