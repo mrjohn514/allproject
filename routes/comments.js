@@ -6,11 +6,11 @@ const router = express.Router();
 const passport=require('passport');
 
 
-const postController = require('../controllers/post_controller');
+const commentController = require('../controllers/comment_controller');
 
 router.use(express.urlencoded({ extended: true }));
 
-router.post('/createpost',passport.checkAuthentication,postController.createpost);
+router.post('/createcomment',passport.checkAuthentication,commentController.createcomment);
 
 
 

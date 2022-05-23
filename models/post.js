@@ -13,7 +13,16 @@ user:{                          //same as normal field in document  what it  is 
                     // the id we store here must be documents _ids from the User model.
 
                     //basically ref telling which model does the id refers to 
-}
+},
+
+//including the arrya of comments  in the post schema itself to frequently fetch them
+comments:[
+    {
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'Comment' 
+    }
+
+]
 
 }
 ,

@@ -7,6 +7,7 @@
         <form action="/post/createpost" method="post">
             <textarea name="content"  cols="30" rows="3"></textarea>
             <input type="submit" value="post">
+            </form>
             <%}%>
     </div>
 </section>
@@ -14,10 +15,41 @@
 <section>
 
     <div class="post">
-        <%for(i of posts){%>
+        <%for(post of posts){%>
         <div class="card">
-         <p><%=i.content%></p>
-         <p class="uname">By:<%=i.user.name%></p>   
+        <div class="postcontent">
+            <p><%=post.content%></p>
+            <p class="uname">postBy:<%=post.user.name%></p>   
+        </div>
+          <div class="commentform">
+        <% if (locals.user){%>
+            <form action="/comment/createcomment" method="post">
+                <input type="text" placeholder="write ur cmt" name="content">
+                <!-- now we also need the send the post id for the comment to save in post: so we send
+                 sent it here using hidden so when i click submit content,post will wrap in body and 
+                 available at controller in req.body ={content: kkjk,post:difjdk}
+                -->
+                <input type="hidden" name="post" value="<%=post._id%>" >                         
+                <input type="submit" value="comment" >
+             </form>
+
+            <%}%>
+
+           <div class="post-comments-list">
+           <ul id="post-comments-<%=post._id%>">
+            <% for(comment of post.comments){%>
+             <p><%=comment.content%></p>
+             <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
+              
+
+                <%}%>
+           </ul>
+           </div>
+
+
+
+          </div>
+
         </div>
         <%}%>
         </div>
