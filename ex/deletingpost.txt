@@ -1,0 +1,68 @@
+step 1: creating action/controller for deleing a post  
+created deltepost controller in postcontroller
+
+module.exports.deletepost=function(req,res)
+{
+//first check if post is there in db or not so we find in db the postid we received from string params 
+Post.findById(req.params.id,function(err,post){
+
+//if post is there 
+//next check if iam allowed to delete the post found can any random pereson can delte my post no so 
+//user who made the post is only authorise to delte
+//initilaly post.user is only id unntill i populate it 
+
+if(post.user==req.user.id){     //ideally i have to write req.user._id but whenever iam comparing ids of two objects
+                                  //i need to convert them into string so mongoose give me automatic varient of that (.id)
+                                //.id means converting object id into string type automatically                                      
+
+post.remove();
+
+//now i also have to delete comments associaed with post
+Comment.deleteMany({post:req.params.id},function(err){      //post field of Comment collection == req.params.id
+if(err){console.log("erro in comnt deleting ");return}
+
+return res.redirect('/');
+
+})
+
+}
+
+//if user not match 
+else
+{
+    return res.redirect('/');
+}
+
+})
+}
+
+
+step 2 :creating route for deltepost controller in routes post.js
+router.get('/deletepost/:id',passport.checkAuthentication,postController.deletepost);
+
+step 3: now creating buutton for deletion  of post in views 
+now that button should be visivle only when user is sign in and only to the user which is signedin  
+
+checks:
+1st at the view level: showing the thing if user is authorise to 
+
+2nd at the router level allow: the user to send that request if user if authorise to (passport.checkAuthentication)
+
+3rd at action/controller level: allow the post to be deleted only if the (post made by user) and (user sending req to delte) same 
+
+
+ <!-- now if user is signed in and and if signed user id == post . populateduser.id  
+          if i dont put check delete btn is shown to every user without sign in  
+           if i dont put second check then mrjohn can see this btn in anyone post 
+           example mrjohn is signed in then btn is shown to his posts made not only this
+           btn is available on other post also like in victor post   -->
+
+
+           <% if  (locals.user && locals.user.id == post.user.id ) { %>
+
+            <!-- //same .id handle by mongoose i could do _id aswell -->  
+            <p><a href="/post/deletepost/<%=post.id%>">x</a></p>
+            
+            <%}%> 
+
+

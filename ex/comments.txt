@@ -1,0 +1,122 @@
+step 1: created model for comments we can also create the array of comments in post collection
+but fetching or operrating with them will be hectic
+
+so we create model/collection for comments and refer post and uesr there
+
+-->we created comment.js in models;
+
+step 2: now  whenever iam loading post i need to find alll the comments now one way would be 
+to go to the comments and find out all comments but we need to fetch comments on post very frequently
+so we include the ids of all comments in an array in post collection  
+//including the arrya of comments  in the post schema itself to frequently fetch them
+comments:[
+    {
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'comments' 
+    }
+
+]
+
+
+step3 : adding form in each post and trying to put comments in database
+
+1:::>>>first created form also showing only  to logged in users
+  <div class="commentform">
+        <% if (locals.user){%>
+            <form action="/comment/createcomment" method="post">
+                <input type="text" placeholder="write ur cmt" name="content">
+                <!-- now we also need the send the post id for the comment to save in post: so we send
+                 sent it here using hidden so when i click submit content,post will wrap in body and 
+                 available at controller in req.body ={content: kkjk,post:difjdk}
+                -->
+                <input type="hidden" name="post" value="<%=i._id%>" >                         
+                <input type="submit" value="comment" >
+             </form>
+
+            <%}%>
+          </div>
+
+
+
+2:::>>>>>then we make comment controller (crated comment_controller.js)
+
+module.exports.createcomment=function(req,res){
+//now to create a comment over post we need to find weateher that post exists or not for example
+//anyone can change the value of post id in inspect and we will get error 
+//so we find the post with the received post id first then create comment on that post
+
+Post.findById(req.body.post,function(err,post){
+
+if(post){
+    Comment.create({
+    content:req.body.content,
+    post:req.body.post,
+    user:req.user._id
+    },
+    function(err,comment){
+    if(err){console.log("erron in creatin commment");return};
+
+    //first time we are gouing to use update operation on collection down below
+
+    post.comments.push(comment) //this is line 18 comment we receive and automatically id will be pushed from this 
+    post.save();               //whenever i do some changes/updation in db we have to call save, it tells db it is final version save it 
+
+   return res.redirect('/');
+
+    })
+
+}
+
+
+3::>>>then we set the route for this controller (created comment.js file inroutes and linked it index routes)
+router.post('/createcomment',passport.checkAuthentication,commentController.createcomment);
+
+
+
+
+
+
+step 4: now putting comments in post and showing themm in post 
+so similar to previusly we populated the fields in home controller
+
+// sending the all post found after populating user field with whole user object,
+// comments array field(also populating user field inside comment object insserted in array ) with whole comment object comment:[{whole comment not only id}]
+//and also comments:[  whole comment{ content:,    user:populate with whole user,  post:  },......  ] 
+
+
+Post.find({})
+.populate("user")           //user field in post
+.populate({                         //syntax to populat from multiple models like i need to get comment and user of that comment 
+path:'comments',                //comments array in post
+populate:{
+    path:'user'               //user field in comment 
+}
+
+})
+
+      .exec(function(err,posts){            
+
+        if(err){console.log("error in finding and populating ");return};
+
+    return res.render('home_page',{
+        title:'home',
+        posts:posts         
+        });
+})
+
+
+step 6 using populated fields of post and using them in home.ejs
+
+           <div class="post-comments-list">
+           <ul id="post-comments-<%=post._id%>">
+            <% for(comment of post.comments){%>
+             <p><%=comment.content%></p>
+             <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
+              
+
+                <%}%>
+           </ul>
+           </div>
+
+
+

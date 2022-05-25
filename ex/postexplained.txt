@@ -1,0 +1,81 @@
+
+
+step 1: we have created post collection with postshema(createed post.js model)
+
+steps 2 :we have created  a form in views so that user can post from there
+
+step 3 : then setup the post controller in which we just populated the post collection with info from 
+post form that we recieve
+
+step 4 setup the route for this controller (created post.js in routes and mapped the controller)
+
+
+step 5 i want to show post in the homepage so going to homecontroller and passing the post collection docuemnet
+to my views and using them in views \
+module.exports.home=function(req,res){
+
+Post.find({},function(err,posts){
+
+    if(err){console.log("erro");return};
+
+    return res.render('home_page',{
+        title:'home',
+        posts:posts
+        });
+
+})
+
+}
+then using posts in view home.ejs
+
+
+step 6 now i also want to show the name of user who had done post 
+but my post.user field only conatain only user id(user:adfkjdfoinvdoihndv) so i need to populate this user field with whole
+user object form user collection using populate method before passing it to views 
+
+//findin all the posts and pouplating user field of each post
+Post.find({}).populate('user').exec(function(req,res){             //previously we are writting callback fxn along side with finding query
+                                                         //what here as we are populating also we put callback in exec fxn
+        if(err){console.log("erro");return};
+
+    return res.render('home_page',{
+        title:'home',
+        posts:posts         
+        });
+})
+
+
+puting user in views
+
+step 7  now i want to restrict those users from posting which are not loggedin 
+so i can do this by only providing posting forms to those who have signed in and not to all 
+
+1 :first check not showing forms to unsigned users
+    <div class="content">
+        <h1>codeial/homepage</h1>
+        <%if(locals.user){%>          
+        <form action="/post/createpost" method="post">
+            <textarea name="content"  cols="30" rows="3"></textarea>
+            <input type="submit" value="post">
+            <%}%>
+    </div>
+
+
+ // if i use (   <%if(user){%> ) then there will be error "user is not defined"
+ so simply user is not been able to fetch from locals now locals is an object 
+ and if i just refer to locals and ask if this key is present if(locals.user)   //present or not in locals 
+
+locals= {
+user:user_id
+ 
+} 
+
+2nd check : now if someone knows html they will jsut inspect element and edit and create a form 
+if they know our filds and setting the route 
+so to avoid this  that we put at check controller/action level
+that no one other than who are signin are able to make post  so we use passport.checkauthentication in controller of createpost
+
+router.post('/createpost',passport.checkAuthentication,postController.createpost);
+
+so now when a request of localhost/post/createpost came before going to postController.createpost
+first it will be authencicated using passport function

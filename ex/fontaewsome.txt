@@ -1,0 +1,15 @@
+////////////////script used ///////////////
+
+<script src="https://kit.fontawesome.com/0dadbc0850.js" crossorigin="anonymous"></script>
+
+we can downlad script from fontawesome website what we are unable to use icons with prewriten text
+
+
+instead of <i class="fa-brands fa-youtube"></i>
+
+we have to write <i class="fab fa-youtube"></i>
+
+for examples 
+fa-solid -----> fas
+fa-brands ----------> fab
+like this we have to write instead of full name first letterwith fa_

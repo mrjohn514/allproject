@@ -1,0 +1,55 @@
+<header>
+
+    <div class="navbar">
+      <h1>codeal</h1>
+    </div>
+</header>
+
+-------------------css----------------
+.navbar{
+    height: 55px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(104deg, rgba(45,44,46,1) 11%, rgba(127,126,130,1) 86%, rgba(1,15,19,1) 99%);
+    position: sticky;
+    top: 0;;
+}
+
+
+but here navbar will not stick to top as div is insde the heaader and is not working 
+but if we remove the header tag from html 
+ <div class="navbar">
+      <h1>codeal</h1>
+    </div>
+    then above css will work normalluy navbar will stick to top 
+
+
+
+----------------------------------------what we can also do------------
+header{
+    position: sticky;
+    top: 0;;
+}
+
+.navbar{
+    height: 55px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(104deg, rgba(45,44,46,1) 11%, rgba(127,126,130,1) 86%, rgba(1,15,19,1) 99%);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+----basically what happening is div is inside the header and it is not moving up so threshold top=0 will not
+occur as onluy header conntanier is moving so we have to apply sticky to that container that is hitting threshold top =0;

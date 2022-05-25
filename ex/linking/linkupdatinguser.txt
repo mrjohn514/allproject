@@ -1,0 +1,154 @@
+step 1:now we also want to show all the users on home page so we will pass the users form the 
+home controller to our views like we had pssed posts
+      .exec(function(err,posts){            
+
+    User.find({},function(err,users){               //finding all the user in User collection
+ 
+      return res.render('home_page',{
+        title:'home',
+        posts:posts,
+        all_users:users                          //passing users found from User colleciton to views
+        });
+
+    })     
+
+})
+
+
+
+step 2: we added list of user in home ejs
+<section id="user-friends">
+<h2>friends</h2>
+<% for (u of all_users) {%>
+
+<!-- //link to the profile of user -->
+ <p><a href="/user/userprofile/<%=u.id%>"></a> </p>   
+
+<%}%>
+</section>
+
+
+step 3 now as we have change route in a we have to goto user routes and update profile route
+router.get('/userprofile/:id',passport.checkAuthentication,userController.profile); in user.js in routes
+
+
+
+
+step 4:now as we have updated route we have to update profile action in userController.js
+module.exports.profile=function(req,res)
+{
+    console.log(req.session);
+    console.log(req.user);
+   
+
+    User.findById(req.params.id,function(err,user){          //finding user by id received when someon click links in homepage 
+        return res.render('user_profile',{
+            title:'profile',
+            //now here i cant name the key user as user named key already in locals
+           profile_user:user 
+
+        })
+
+    })
+}
+
+
+
+
+//what all_users is doing we are psiing all the users present in User collection to views through this all_users
+
+//now we put all_user.name in anchor tag  and id in route in whcih sending the id of user who clicked the link
+<% for (u of all_users) {%>
+
+<!-- //link to the profile of user -->
+ <p><a href="/user/userprofile/<%=u.id%>">u.name</a> </p>   
+
+<%}%>
+
+
+//now associating this route with profile controller  in step 3 
+and here finding the only user whose id matched to the one who clicked the link 
+
+and this found usre is mapped to profile_user  profile_user:user found 
+
+then sending this to use in profile views to show the details fo founded user by using profile_user in user_profle.ejs
+
+
+
+step 5 using profile_user info in views that is in user_profile ejs
+<section >
+    <div class="content"> 
+  <p><%=profile_user.name%></p>
+  <p><%=profile_user.email%></p> 
+
+    </div>
+</section>
+
+
+///////////////////////////some other exp///////////////////
+-------------able to view victor profile without signin basicalllyy john is logged in and when he clicked
+victor link in friend he is directed to profile of victor previously we are only allowed to view profile
+if user is logged in because we are checking in route  passport.checkAuthentication;
+router.get('/userprofile',passport.checkAuthentication,userController.profile);
+
+->now this is also working if iam not logged and click on freinds links iam redirected to signin page 
+///////////////////////////some other exp///////////////////
+
+
+
+stpe 6 also providing update form in user profile to update their name and emails
+    <div class="content"> 
+    
+     <!-- here we are not checking if(locals.user) becaues it is sure user cant view his profile page
+     without login as we have added in passport.checkaAuthenticaiton chek so we know if user is in profile
+     he is loged in 
+    -->
+              
+        <% if(user.id==profile_user.id){%>
+  <!-- if user matches i will show form for updation -->
+
+       <form action="/user/updateuser/<%=profile_user.id%>" method="post">
+           <!-- value attribute will have the current user name,email value who is logged in showing in fields   -->
+          <input type="text" name="name" placeholder="entername" value="<%=profile_user.name%>" required >  
+          <input type="email" name="email" placeholder="email" value="<%=profile_user.email%>" required >
+          <input type="submit" value="update">
+
+       </form>
+
+
+            <%}else {%>
+ <!-- otherwise onlu info -->
+
+        <p><%=profile_user.name%></p>
+        <p><%=profile_user.email%></p>
+        <%}%>
+
+    </div>
+
+
+    step 7 : creating action or controller for submitting form in userController
+module.exports.updateuser= function(req,res){
+
+//checking if user is authorise to make update requesting 
+//basically signed user == sending update req user 
+if(req.user.id==req.params.id)
+{
+    // req.body is same as it= {name:req.body.name,email:req.body.email}  so instead of writing this req.body
+User.findByIdAndUpdate(req.params.id,req.body,function(err,user){
+if(err){console.log("errrrrrr");return}
+return res.redirect('/');
+
+})       
+}
+
+else{
+    return res.status(401).send('unauthorise');       //http statuus codes 
+}
+}
+
+
+step 8 creating route for the above controller 
+router.post('/updateprofile/:id',passport.checkAuthentication,userController.updateuser);
+
+
+step 9 improving scss

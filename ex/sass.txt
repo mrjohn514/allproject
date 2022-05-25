@@ -1,0 +1,120 @@
+Now we are changing our way to write css in ouur websites
+as if we write it as we write it will take so much time 
+
+so there is introduction of sass and scss to help us
+
+css
+div p a {
+    //css for a tag
+}
+
+div p {
+//css for p tag
+}
+
+but as i have to write div p two times to give first css to anchor and then to p
+but i want to give css to both p and a simultaineously wiithout repeating code again and again 
+hence sass and scss came 
+
+
+--------------------sass----------------
+it have indentaiton format
+div
+   ----css--
+   ----css---
+   p
+    ---css----
+    a
+     ---css---
+
+
+---------------------------scss----------------
+div{
+    -----csss
+    ------css 
+    p{
+     ----css
+     --css
+      a{
+      ---css
+      ----csss
+
+      }
+
+    }
+
+}
+
+
+
+
+/////////////////////////////////explaantion///////////////////////
+
+so we are writiing our code in scss and whenever our server starts our middleware npm package will
+converted it into css 
+whenever our views reference to stylesheet they will reference to css not scss because  this is the file that 
+will served to browse as browser only understand css
+
+
+
+
+
+-------------setting up scss---------------
+
+
+
+step 1 installing in project using command npm install node-sass-middleware
+
+step 2 requring the module in index.js
+const sasaMiddleware =require(node-sass-middleware)
+
+
+---now where i have to use this sasaMiddleware firstly i have to set the settings descrived in 
+documentation 
+
+we will put it just before server is starting becaue i need those files to be precompiled before the server 
+starts as  whenever my template ask for it these precompiled files will be given back
+
+//whenver u are running srver and reaching a page it converts sccss into css and then links it to my viws
+//
+
+step 3 app.use(sasaMiddleware({
+src: './assets/scss',                   //from whre do i pick up the scss files to convert into css
+
+dest: './assets/css',                 //where do i have to put the converted scss filees(ie css files)
+
+//debug mode is basically whatever info u see while server is running in terminal 
+//do i want to display some errors that are there in file during compilation when they are not able to convert scss file to css 
+debug: true,                  
+
+outputstyle:'extended',
+
+
+// where should my server look for css files by default it is looking into css folder in assets but now
+//we are using the middleware we have to explicitly tell here
+prefix:  '/css'
+
+
+}));
+
+
+upto this the file created in scss folder will convert to css and placed in css and 
+also result of css will appende in page 
+
+for example i creted profile.scss  wiht backgroundcolor: red;
+now when the server starts and userprofile page is renders it rendered with red colro background
+and if i check css folder there is afile with profile.css that is converted from profile.scss to profile.css
+
+
+
+
+
+
+----------------------what is done--------------------
+created new home page and added controler,route and views
+added the sccss for home 
+
+then created profile page 
+and added sccss for profile page
+
+changed some routes like if u login u directyly goes to profile page

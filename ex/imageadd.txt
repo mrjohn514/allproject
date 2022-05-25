@@ -1,0 +1,27 @@
+first method to add in html itself
+    <div class="content">
+    <img src="/images/back.jpg" alt="">  //ading from local storage 
+    </div>
+
+
+in css 
+{
+specify heigh width 100% so that it fitst to parent 
+basically has to provide dimenssions extra  
+}
+
+
+
+-------------------------second method   specifying directly in csss----------
+<div class="content">
+    </div>
+
+
+    .content{
+box-sizing: border-box;
+  height: 700px;
+  background-image: url("https://assets.justinmind.com/wp-content/uploads/2020/02/website-background-design-guide-768x492.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:cover;
+}
