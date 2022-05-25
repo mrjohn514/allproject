@@ -37,6 +37,35 @@ if(post){
 }
 
 
+module.exports.deletecomment=function(req,res){
+
+//finding if comment existed in database by passing the comment id received in string params to query
+
+Comment.findById(req.params.id,function(err,comment){
+if(err){console.log("erro finding cmtn");return}
+
+//if comment found then is user authorise to delete comment or not 
+//checking  founded comment user id(comment.user) == signed in user id (req.user.id)
+
+if(comment.user== req.user.id){
+comment.remove();
+return res.redirect('/');
+}
+else
+{
+    return res.redirect('/');
+}
+
+
+});
+
+
+
+
+
+}
+
+
 
 
 

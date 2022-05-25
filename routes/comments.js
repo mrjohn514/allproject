@@ -12,6 +12,8 @@ router.use(express.urlencoded({ extended: true }));
 
 router.post('/createcomment',passport.checkAuthentication,commentController.createcomment);
 
+router.get('/deletecomment/:id',passport.checkAuthentication,commentController.deletecomment);
+
 
 
 module.exports=router;

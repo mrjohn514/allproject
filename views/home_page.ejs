@@ -52,6 +52,16 @@
            <div class="post-comments-list">
            <ul id="post-comments-<%=post._id%>">
             <% for(comment of post.comments){%>
+<!-- 
+             similar to post if user is signed in and also the signed in user id (local.user.id) must be equal
+             to  received comments in post.comment[{ now populated}] (comment.user.id) 
+             this tells to show x onlly on those comments which are made by signed in user -->
+
+
+              <% if (locals.user && locals.user.id ==comment.user.id){  %>
+                
+              <p><a href="/comment/deletecomment/<%=comment.id%>">x</a></p>  
+              <%}%>
              <p><%=comment.content%></p>
              <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
               

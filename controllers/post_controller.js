@@ -2,7 +2,6 @@ const Post=require('../models/post');
 
 const Comment=require('../models/comment');
 
-const { post } = require('../routes');
 
 
 
@@ -29,7 +28,7 @@ return res.redirect('/');
 
 module.exports.deletepost=function(req,res)
 {
-//first check if post is there in db or not so we find in db the postid we received from string params 
+//first check if post is there in db or not so we find in db through postid we received from string params 
 Post.findById(req.params.id,function(err,post){
 
 //if post is there 
