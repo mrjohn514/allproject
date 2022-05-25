@@ -1,3 +1,4 @@
+const e = require('express');
 const Comment=require('../models/comment');
 
 const Post=require('../models/post');
@@ -48,9 +49,18 @@ if(err){console.log("erro finding cmtn");return}
 //checking  founded comment user id(comment.user) == signed in user id (req.user.id)
 
 if(comment.user== req.user.id){
+
+let postid=comment.post;  //storing in var so to remove the comment id in post.comment array 
 comment.remove();
+
+//updaing Post.commments by removing the commentid of comment that we have delted 
+//inbuilt mongoose fucntion $pull: {this is the id i need to pullout from comments}
+Post.findByIdAndUpdate(postid,{ $pull:{comments:req.params.id }},function(err,post){
 return res.redirect('/');
+})
 }
+
+
 else
 {
     return res.redirect('/');
