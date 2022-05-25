@@ -1,0 +1,47 @@
+<div class="card">
+    <div class="postcontent">
+
+     <!-- now if user is signed in and and if signed user id == post . populateduser.id  
+      if i dont put check delete btn is shown to every user without sign in  
+       if i dont put second check then mrjohn can see this btn in anyone post 
+       example mrjohn is signed in then btn is shown to his posts made not only this
+       btn is available on other post also like in victor post   -->
+
+
+       <% if  (locals.user && locals.user.id == post.user.id ) { %>
+
+        <!-- //same .id handle by mongoose i could do _id aswell -->  
+        <p><a href="/post/deletepost/<%=post.id%>">x</a></p>
+        
+        <%}%> 
+        <p><%=post.content%></p>
+        <p class="uname">postBy:<%=post.user.name%></p>   
+    </div>
+      <div class="commentform">
+    <% if (locals.user){%>
+        <form action="/comment/createcomment" method="post">
+            <input type="text" placeholder="write ur cmt" name="content">
+            <!-- now we also need the send the post id for the comment to save in post: so we send
+             sent it here using hidden so when i click submit content,post will wrap in body and 
+             available at controller in req.body ={content: kkjk,post:difjdk}
+            -->
+            <input type="hidden" name="post" value="<%=post._id%>" >                         
+            <input type="submit" value="comment" >
+         </form>
+
+        <%}%>
+
+       <div class="post-comments-list">
+       <ul id="post-comments-<%=post._id%>">
+        <% for(comment of post.comments){%>
+            
+            <%- include('_comment') -%>
+          
+            <%}%>
+       </ul>
+       </div>
+
+
+      </div>
+
+    </div>
