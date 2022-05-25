@@ -1,5 +1,7 @@
 const Post = require('../models/post');
 
+const User= require('../models/user');
+
 module.exports.home=function(req,res){
 
   //->without populating just sendinng all posts found in collection post as it is 
@@ -52,12 +54,16 @@ populate:{
 
       .exec(function(err,posts){            
 
-        if(err){console.log("error in finding and populating ");return};
-
-    return res.render('home_page',{
+    User.find({},function(err,users){               //finding all the user in User collection
+ 
+      return res.render('home_page',{
         title:'home',
-        posts:posts         
+        posts:posts,
+        all_users:users                          //passing users found from User colleciton to views
         });
+
+    })     
+
 })
 
 

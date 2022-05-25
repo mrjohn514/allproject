@@ -19,7 +19,9 @@ router.use(express.urlencoded({ extended: true }));
 
 //before going to this route this checkautehnctication called if ok then next in function 
 //called to controler of profile 
-router.get('/userprofile',passport.checkAuthentication,userController.profile);
+router.get('/userprofile/:id',passport.checkAuthentication,userController.profile);
+
+router.post('/updateprofile/:id',passport.checkAuthentication,userController.updateuser);
 
 
 router.get('/signup',userController.signup)

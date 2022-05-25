@@ -39,6 +39,8 @@ Post.findById(req.params.id,function(err,post){
 if(post.user==req.user.id){     //ideally i have to write req.user._id but whenever iam comparing ids of two objects
                                   //i need to convert them into string so mongoose give me automatic varient of that (.id)
                                 //.id means converting object id into string type automatically                                      
+                                //basically user.id gets the string of user._id and user._id  is of type objectid 
+
 
 post.remove();
 

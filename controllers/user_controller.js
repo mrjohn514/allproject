@@ -3,14 +3,59 @@ const User=require('../models/user')
 
 
 
+// module.exports.profile=function(req,res)
+// {
+//     console.log(req.session);
+//     console.log(req.user);
+
+//         return res.render('user_profile',{
+//             title:'profile',
+//     })
+// }
+
 module.exports.profile=function(req,res)
 {
     console.log(req.session);
     console.log(req.user);
-    return res.render('user_profile',{
-        title:'profile'
+ /// this is only works for links we created inside friends and not when u click mrjohn aside of signout at top becaues route changed 
+    User.findById(req.params.id,function(err,user){
+        return res.render('user_profile',{
+            title:'profile',
+            //now here i cant name the key user as user named key already in locals
+           profile_user:user 
+
+        })
+
     })
 }
+
+
+module.exports.updateuser= function(req,res){
+
+//checking if user is authorise to make update requesting 
+//basically signed user == sending update req user 
+if(req.user.id==req.params.id)
+{
+    // req.body is same as it= {name:req.body.name,email:req.body.email}  so instead of writing this req.body
+User.findByIdAndUpdate(req.params.id,req.body,function(err,user){
+if(err){console.log("errrrrrr");return}
+return res.redirect('/');
+
+})       
+}
+
+else{
+    return res.status(401).send('unauthorise');       //http statuus codes 
+}
+
+
+
+}
+
+
+
+
+
 
 
 

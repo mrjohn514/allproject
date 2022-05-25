@@ -1,5 +1,30 @@
 <link rel="stylesheet" href="/css/profile.css">
 <section >
-    <div class="content">
+    <div class="content"> 
+    
+     <!-- here we are not checking if(locals.user) becaues it is sure user cant view his profile page
+     without login as we have added in passport.checkaAuthenticaiton chek so we know if user is in profile
+     he is loged in 
+    -->
+              
+        <% if(user.id==profile_user.id){%>
+  <!-- if user matches i will show form for updation -->
+
+       <form action="/user/updateprofile/<%=profile_user.id%>" method="post">
+           <!-- value attribute will have the current user name,email value who is logged in showing in fields   -->
+          <input type="text" name="name" placeholder="entername" value="<%=profile_user.name%>" required >  
+          <input type="email" name="email" placeholder="email" value="<%=profile_user.email%>" required >
+          <input type="submit" value="update">
+
+       </form>
+
+
+            <%}else {%>
+ <!-- otherwise onlu info -->
+
+        <p><%=profile_user.name%></p>
+        <p><%=profile_user.email%></p>
+        <%}%>
+
     </div>
 </section>

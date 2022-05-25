@@ -24,7 +24,13 @@ header {
   align-items: center;
   background: linear-gradient(104deg, #2d2c2e 11%, #7f7e82 86%, #010f13 99%); }
 
+.maincontainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between; }
+
 .content {
+  width: 70%;
   text-align: center;
   box-sizing: border-box;
   height: 700px;
@@ -32,6 +38,18 @@ header {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover; }
+
+.right {
+  box-sizing: border-box;
+  width: 26%;
+  height: 650px;
+  box-shadow: 2px 2px 8px 7px #cbc1e8;
+  margin-top: 15px;
+  margin-right: 13px; }
+
+.chip {
+  margin: 4px 0px;
+  background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%); }
 
 .footercontainer {
   display: flex;
