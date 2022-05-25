@@ -18,6 +18,20 @@
         <%for(post of posts){%>
         <div class="card">
         <div class="postcontent">
+
+         <!-- now if user is signed in and and if signed user id == post . populateduser.id  
+          if i dont put check delete btn is shown to every user without sign in  
+           if i dont put second check then mrjohn can see this btn in anyone post 
+           example mrjohn is signed in then btn is shown to his posts made not only this
+           btn is available on other post also like in victor post   -->
+
+
+           <% if  (locals.user && locals.user.id == post.user.id ) { %>
+
+            <!-- //same .id handle by mongoose i could do _id aswell -->  
+            <p><a href="/post/deletepost/<%=post.id%>">x</a></p>
+            
+            <%}%> 
             <p><%=post.content%></p>
             <p class="uname">postBy:<%=post.user.name%></p>   
         </div>
@@ -41,11 +55,9 @@
              <p><%=comment.content%></p>
              <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
               
-
                 <%}%>
            </ul>
            </div>
-
 
 
           </div>
