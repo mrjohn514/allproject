@@ -2,7 +2,7 @@ const Post = require('../models/post');
 
 const User= require('../models/user');
 
-module.exports.home=function(req,res){
+// module.exports.home=function(req,res){
 
   //->without populating just sendinng all posts found in collection post as it is 
 
@@ -16,6 +16,8 @@ module.exports.home=function(req,res){
 //         });
 
 // })
+
+
 
 
 //--->2 sending all the post found after populating their user field 
@@ -42,34 +44,78 @@ module.exports.home=function(req,res){
 //and also comments:[  whole comment{ content:,    user:populate with whole user,  post:  },......  ] 
 
 
-Post.find({})
-.populate("user")           //user field in post
-.populate({                         //syntax to populat from multiple models like i need to get comment and user of that comment 
-path:'comments',                //comments array in post
-populate:{
-    path:'user'               //user field in comment 
-}
+// Post.find({})
+// .populate("user")           //user field in post
+// .populate({                         //syntax to populat from multiple models like i need to get comment and user of that comment 
+// path:'comments',                //comments array in post
+ // populate:{
+ //     path:'user'               //user field in comment 
+ // }
 
-})
+ // })
 
-      .exec(function(err,posts){            
+ //       .exec(function(err,posts){            
 
-    User.find({},function(err,users){               //finding all the user in User collection
- 
-      return res.render('home_page',{
-        title:'home',
-        posts:posts,
-        all_users:users                          //passing users found from User colleciton to views
-        });
+ //     User.find({},function(err,users){               //finding all the user in User collection
+  
+ //       return res.render('home_page',{
+ //         title:'home',
+ //         posts:posts,
+ //         all_users:users                          //passing users found from User colleciton to views
+ //         });
 
-    })     
+ //     })     
 
-})
+ // })
+
+ // }
+//}  home bracket
 
 
 
+ ///////////////////changing above to asyn code///////////////
+
+
+ module.exports.home= async function(req,res){                                
+
+  try {
+  
+  //and this post part is now awating and any success responce will be stored in let post 
+  
+  let posts = await Post.find({})                                              //await 1  first this get executed
+  .populate("user")          
+  .populate({                       
+  path:'comments',               
+  populate:{
+      path:'user'             
+  }
+  });
+  //now once this post part get exexutedthen this user part get exexuted  
+  
+  
+  // similar any success responce will be stored in let user 
+  let users= await User.find({});                                                  //await 2  then thiss get executed
+  
+  //now once this user get executed then this redner part will executed
+  
+  
+  // and the stored post and user responce will sent to the server 
+    return res.render('home_page',{                                              //then this get executed
+           title:'home', 
+          posts:posts,
+          all_users:users                          
+          });
+  
+  
+  }catch(err){
+  console.log("error",err);
+  return;
+  }
+  
+  
+  
+  }
 
 
 
-}
 

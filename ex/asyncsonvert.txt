@@ -1,0 +1,189 @@
+----------------what is problem comming ----------
+
+mongoose queries are by default asynchronos
+
+as we know all the qureries we are making to database are asynchronos 
+
+-->running on the cpu where as the main thread of nodejs server is executing something else
+
+->now the below code is getting clutterd it is kind of a callback of hell 
+
+
+
+
+Post.find({})                //qurey 1
+.populate("user")          
+.populate({                       
+path:'comments',               
+populate:{
+    path:'user'             
+}
+
+})
+
+      .exec(function(err,posts){        //query 1 callback      
+
+    User.find({},                  //iside the callback of query1  this is called query 2   
+    
+    function(err,users){              //query 2 callback 
+ 
+      return res.render('home_page',{   ///inside the callback of qurey2  this return will executed 
+         title:'home', 
+        posts:posts,
+        all_users:users                          
+        });
+
+    })     
+
+})
+
+
+-->what we want
+we want query1 to be executed and after that query2 be exexuted and afer that return is called  
+
+there are three ways to do this type of stuff:
+1 already done above 
+2 using promise
+3 asyn await
+
+
+
+---------------promisees------------
+
+let post = Post.find({}).populate("user").exex();
+
+post.then();
+
+
+---------------------asyn await--------------------------
+
+now what this do it tells server that this function contain some asynchronos statements ans you need to wait 
+with each asynchronos statemnet and once it get executed then only move to next one;
+
+
+step 1 : make the function asyn which declares that this function contain some asyn statements
+
+step 2: puting query in let and adding await also
+
+step 3 removing exex part and puting code of it directly 
+
+step 4 removing callback of user query
+
+step 5 //one questin arise how to handle the errors means any await responce is not succes there is error
+then i will user try catch once no need to catch error with every query only need to one once 
+
+
+
+
+module.exports.home= async function(req,res){                 //async
+
+try {
+
+//and this post part is now awating and any success responce will be stored in let post 
+
+let post = await Post.find({})                            //await 1  first this get executed
+.populate("user")          
+.populate({                       
+path:'comments',               
+populate:{
+    path:'user'             
+}
+});
+//now once this post part get exexutedthen this user part get exexuted  
+
+
+similar any success responce will be stored in let user 
+let user=await User.find({});                                //await 2  then thiss get executed
+
+//now once this user get executed then this redner part will executed
+
+
+and the stored post and user responce will sent to the server 
+  return res.render('home_page',{                     //then this get executed
+         title:'home', 
+        posts:posts,
+        all_users:users                          
+        });
+
+
+}catch(err){
+
+
+console.log(err);
+return;
+}
+
+}
+
+
+
+/////////////////////////////////now changing all controller according////////////
+
+1st post controller 
+
+module.exports.createpost= async function(req,res){       //first add sync
+
+  try{
+
+  console.log("entering createpost")
+  console.log(req.body);
+let post=await Post.create({                              //let the responce and add await
+content:req.body.content,
+user:req.user._id                  
+
+});
+
+
+return res.redirect('/');
+
+  }catch(err){
+  console.log("error",err);
+  return;
+
+  }
+
+
+}
+
+
+
+///now delte post conversion
+
+module.exports.deletepost= async function(req,res)
+{
+try{
+
+  let post= await  Post.findById(req.params.id);  //await 1   receve responce in let and add await to query
+
+  if(post.user==req.user.id){                   //then this exeuted
+  
+    post.remove();
+    
+    
+   let comment= await Comment.deleteMany({post:req.params.id});  //await 2
+  
+  
+   return res.redirect('/');                   //then this exexuted
+    
+    }
+    
+    //if user not match 
+    else
+    {
+        return res.redirect('/');
+    }
+    
+}catch(err){
+
+  console.log("error",err);
+  return;
+}
+}
+
+
+//now changin comment controller
+
+
+
+
+
