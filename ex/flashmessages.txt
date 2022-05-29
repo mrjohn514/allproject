@@ -100,3 +100,44 @@ step 10: using the sent message in res.locals.flash in middleware in views
   flash: {},
   passport: { user: '628596f30b9f32e9448cf0b6' }
 }
+
+
+
+
+-----------------------------------now we want to show fancy notificatoins of flash mesage-----------
+
+we are going to use noty library to make flash mesages appear good
+we can add css and js files form noty website and add it to our project and then we can use the inbuilt classes 
+
+but we can also use cdn (these css and js files are hoste by someone in cloud and we can use them by addin  cdn to our project)
+we just have to use inbuilt objects 
+
+
+script :   https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js
+
+css:      https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css
+
+
+step 1: added the cdn in head of layout file 
+<!-- noty css cdn -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css">
+      <!-- noty js cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+
+
+step 2 :adding new noty inside of script tag
+
+  <script>
+<% if(flash.success && flash.success.length>0) { %>
+ 
+    new Noty({
+        theme:'relax',                //type of noty theme 
+        text: '<%=flash.success%>',         //mesage text
+         type: 'success',                        //color scheme 
+         layout: 'topRight',                      //position of flash message 
+         timeout: '1500'                           //time till we want to show flash  1500 milisec
+
+}).show();
+
+ <%}%> 
+  </script>      
