@@ -27,6 +27,13 @@ const MongoStore= require('connect-mongo');
 const sassMiddleware =require('node-sass-middleware');
 
 
+//requiring the flash module
+const flash= require('connect-flash');
+
+
+//requireing custum middleware
+const customMware=require('./config/middleware');
+
 
              /////using sasss in appp 
 app.use(sassMiddleware({
@@ -53,8 +60,8 @@ app.use(sassMiddleware({
 //we have to tell the app to use cookie parsr and we know the place to change the  upcoming data through req
 //can be alterd in middleware so 
 app.use(cookieParser());
-
 app.use(expresslayouts);  
+
 
 app.set('layout extractStyles',true);
 app.set('layout extractscripts',true);
@@ -87,7 +94,6 @@ store: MongoStore.create({ mongoUrl: 'mongodb://localhost/codeial_development' }
 //telling app to use passport
 app.use(passport.initialize());
 app.use(passport.session());
-
 //whenever this function is called it will check wheather a sesssion cookie is present or not
 //if present then it will set the 
 // user will be set in locals ;
@@ -95,6 +101,15 @@ app.use(passport.session());
 //so whenever app is intialised this is also called (automatically called as midllware)
 //so whenver any req is called in then this is called andd  
 app.use(passport.setAuthenticatedUser);
+
+
+
+
+//setting flash
+app.use(flash());
+//using the custum midlleware for flsh message
+app.use(customMware.setFlash);
+
 
 
 //also have to put routes after these

@@ -1,0 +1,102 @@
+so how do these flash messages work remeber we user sesion cookie which is enccrypted now flash mesags are stored 
+in session cookie and they got cleared on next request whenver sign in flash mesage sent to session cookie and 
+when i refreesh that flash mesage erased 
+
+
+
+
+step 1 install flash message library to project 
+npm install connect-flash;
+
+step 2 require the library in index.js main
+const flash= require('connect-flash');
+
+
+step 3 now after requireing we need to set it up for use 
+just after the sessions midlleware set and passport authencticateduser middleware is set we will set flash message
+
+why after sessions beacuase it user sessions cookies
+flash messages wil be set up in the cookies it stores the session information
+
+
+step 4 :let create  flash mesages in user controller
+
+module.exports.createsession=function(req,res)
+{
+
+ //here req.flash method by module we installed above 
+ // The method req.flash(type, message) sets the value of new flash mesage provided by modeule we insatlled
+
+  req.flash('success','loged in succesfully');                
+    return res.redirect('/');
+}
+
+
+step 6: now here flash mesage in on the request and what we sending back in res so this mesage needs to tranferd to 
+responce 
+now one thing we can do we can pass them in responce like we pass posts,users etc
+return res.redirect('/',{
+flash:{success:'succesfully loged in '} //what will be the use every time i will sent a seperate conext for flash mesage 
+
+})
+
+
+
+step 7: so we can create our custum middleware 
+ 1.create new file middleware.js in config
+ module.exports.setFlash=function(req,res,next){
+//here we will find out the flash message  from the req and set it up in locals of res and so we can acces these
+//locals in views/template 
+
+res.locals.flash ={
+
+    // The method req.flash(type) gets the value of all flash messages matching of the same type
+'sucsess':req.flash('success'),  
+ 'error':req.flash('error')
+
+}
+
+}
+
+
+stpe 9: requring middleware  in index.js
+//requireing custum middleware
+const customMware=require('./config/middleware');
+
+
+step 19: using the middleware
+//using the custum midlleware for flsh message
+app.use(customMware.setFlash);
+
+
+step 10: using the sent message in res.locals.flash in middleware in views
+
+<!-- accesing the flash message sent from middleware to locals -->
+<!-- if there is success type return and and  message string is not emptty is there  -->
+
+<% if(flash.success && flash.success.length>0) { %>
+    <h1 style="color:black"><%=flash.success%></h1>
+ <%}%> 
+
+
+
+
+
+
+
+
+
+
+
+
+ -----------------flash stored in session cookie at server side------------
+ Session {
+  cookie: {
+    path: '/',
+    _expires: 2022-05-29T06:01:15.685Z,
+    originalMaxAge: 6000000,
+    httpOnly: true
+  },
+  flash: {},
+  passport: { user: '628596f30b9f32e9448cf0b6' }
+}

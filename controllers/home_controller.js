@@ -78,6 +78,7 @@ const User= require('../models/user');
 
  module.exports.home= async function(req,res){                                
 
+
   try {
   
   //and this post part is now awating and any success responce will be stored in let post 

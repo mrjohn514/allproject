@@ -13,9 +13,16 @@
 
 </head>
 <body>
-    
 
 <%- include('_header');%>
+
+<!-- accesing the flash message sent from middleware to locals -->
+
+<!-- if there is success type return and and  message string is not emptty is there  -->
+
+<% if(flash.success && flash.success.length>0) { %>
+    <h1 style="color:black"><%=flash.success%></h1>
+ <%}%> 
 
  <%- body%>       
 

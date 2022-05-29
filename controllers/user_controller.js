@@ -90,7 +90,7 @@ module.exports.signin=function(req,res)
 module.exports.deletesession=function(req,res)
 {
 req.logout();         //this is definde in passport which will delete the req.sesseion.passport.user and hence singed out
-
+req.flash('success','loged out succesfully'); 
 return res.redirect('/');
 
 }
@@ -145,5 +145,8 @@ module.exports.createuser=function(req,res)
 //when passport use fxn localstrategy to authenticate the user the control comes over here  
 module.exports.createsession=function(req,res)
 {
+    // The method req.flash(type, message) sets the value of new flash mesage provided by modeule we insatlled
+  req.flash('success','loged in succesfully');       //we know req is an object and we are seting flash fucntion inside req object 
+
     return res.redirect('/');
 }
