@@ -15,24 +15,36 @@ const User=require('../models/user')
 
 //we need to tell passport to  use the local strategy we created
 passport.use(new LocalStrategy({
-usernameField:'email'                //how do i detect which is the user //so usernamefield is email //this is syntax
+usernameField:'email',                //how do i detect which is the user //so usernamefield is email //this is syntax
                                //usernamefeild for user in schema is email //the fiel  which is uniqe which identify  user maped against usernamefield
+
+
+passReqToCallback:true                  //allows us to use first argument in callback funtion as req 
+                                 //so that we can add flash to req here and fetch in custumware 
+
+
+
+
 
 
 //whenever localstrategy is called then emial and password is passed on and done fxn is passed on 
 //with done fxn                               
-},function(email,password,done){ 
+},function(req,email,password,done){ 
     //find a user and establish the identity    
 
 User.findOne({email:email},function(err,user){       //findone({this email from User/collection, this is passed email in function line 23})
-if(err){console.log("error in finding user"); 
+if(err){
+   
+req.flash('error',err);
+//  console.log("error in finding user"); 
 return done(err);             
 //done(error,authentication done or not) //as js fxn can receive less arguments also so writen like this
 //done is callbak fxn reporting to passport
 }                               
 
 if(!user||user.password!=password){
-    console.log("invalid username password")
+    req.flash('error','invalid username/password');
+    // console.log("invalid username password")
     return done(null,false);          //done(erro=null,authenticated=false)
 }
 

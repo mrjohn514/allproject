@@ -141,3 +141,73 @@ step 2 :adding new noty inside of script tag
 
  <%}%> 
   </script>      
+
+
+
+
+
+  ---------------------------adding flash to all other actions like----------
+  1 invalid username/password during signin
+
+step 1: now i know whenver i signin this passport.use(new LocalStrategy({}) is called so we added a
+flash for errors here when user enter wrong email or password then flash is shown.
+
+what problem is that here we dont have req object in which we add flash to fetch in customMware 
+to solve this there is option passreqtocallback 
+
+
+passport.use(new LocalStrategy({
+usernameField:'email',
+passreqtocallback:true                //it allows us to set first argument in callback as request                 
+},
+
+
+function(req,email,password,done){   
+
+
+User.findOne({email:email},function(err,user){      
+if(err){
+ req.flash('error',err) 
+return done(err);             
+}                               
+
+if(!user||user.password!=password){
+    req.flash('error','invalid username/password');
+    return done(null,false);        
+}
+
+return done(null,user);
+})
+}
+
+));
+
+
+step 2 :now adding script of flash to singin views
+ <script>
+
+        <% if(flash.error && flash.error.length>0) { %>
+            new Noty({
+                theme:'relax',                //type of noty theme 
+                text: '<%=flash.error%>',         //mesage text
+                 type: 'error',                        //color scheme 
+                 layout: 'topRight',                      //position of flash message 
+                 timeout: '1500'                           //time till we want to show flash  1500 milisec
+        }).show();
+        
+         <%}%> 
+          </script>     
+
+
+
+-------------------------adding flash for post creation and deletion-------------
+
+adding flash mesage  in post creation controller
+req.flash('success','new postcreated ')
+
+same with detelting post
+req.flash('success', 'post deleted ')
+
+
+
+------------------ading flash for comment deletion and addition 

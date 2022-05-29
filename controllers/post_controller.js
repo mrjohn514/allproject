@@ -40,7 +40,7 @@ user:req.user._id
 
 });
 
-
+req.flash('success','new postcreated ')
 return res.redirect('/');
 
   }catch(err){
@@ -113,6 +113,7 @@ try{
    let comment= await Comment.deleteMany({post:req.params.id});  //await 2
   
   
+   req.flash('success','post deleted ')
    return res.redirect('/');                   //then this exexuted
     
     }

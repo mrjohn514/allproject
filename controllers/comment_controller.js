@@ -54,6 +54,7 @@ module.exports.createcomment= async function(req,res){
      post.comments.push(comment) 
      post.save();                
  
+     req.flash('success','new comment added')
     return res.redirect('/');
  
  }
@@ -120,6 +121,7 @@ module.exports.deletecomment= async function(req,res){
       comment.remove();
      await Post.findByIdAndUpdate(postid,{ $pull:{comments:req.params.id }});   //await 2 when responce is not need like here iam receiving post but no need so direclty await
   
+     req.flash('success','comment removed')
      return res.redirect('/');
   
       }

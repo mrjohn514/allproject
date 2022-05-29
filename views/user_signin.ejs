@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/css/signin.css">
+     <!-- noty css cdn -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css">
+     <!-- noty js cdn -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+
 </head>
 <body>
  
@@ -31,6 +36,26 @@
 
 </div>
     
+
+  <!-- i have to add independetly as iam not using layout in singin page as layout:false -->
+    <script>
+
+        <% if(flash.error && flash.error.length>0) { %>
+         
+            new Noty({
+                theme:'relax',                //type of noty theme 
+                text: '<%=flash.error%>',         //mesage text
+                 type: 'error',                        //color scheme 
+                 layout: 'topRight',                      //position of flash message 
+                 timeout: '1500'                           //time till we want to show flash  1500 milisec
+        
+        }).show();
+        
+        
+         <%}%> 
+        
+          </script>     
+
 
 
 </body>
