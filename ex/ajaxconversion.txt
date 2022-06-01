@@ -1,0 +1,152 @@
+what is the problem comming in porject
+
+every time i create post the home page refreshes every time and loads agian as in controller we redirecting to 
+home page every time i create a new post 
+
+now if u are facebook you made a post and with every new post your whole feed refreshd again and agan 
+
+now to overcome that we are using ajax whenever i submit the form for creating post i wil submit by ajax
+get something in res which is in form of json and append it to our page 
+
+
+
+step 1 : including the jquery cdn in layout becaues we want all other pages also  should able to use 
+jquery 
+https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js
+
+
+stpe 2 :now will create the js file in assets which will fetches the data from form and sends in json format to
+acition/controller 
+whenever iam submitting the form for creating post it should not be submited defaultly it should be submited
+by jquery ajax 
+
+created file home_post.js in assets;
+
+step 3:includiin this js file in home_page.ejs
+
+
+step4 : while creating post what are the two things we needed one a funciton which wil handle the submision
+of the posts form (sendin data) and funciton which will receives the data of created post and displays on page
+
+lets create funciton which will handle the sending of data to aciton/controller
+
+//method to submit the createpost form data using ajax
+
+
+let createPost= function(){
+let newPostForm= $('#new-post-form');
+
+ //.submit is a eventlistner like in js(click pressed) here we receieved this event
+ //of submiting form in callback funcion in e argument 
+newPostForm.submit(function(e){    
+
+e.preventDefault();                      //restrincitng  the form default submission behaviour
+
+
+//creating manual submision of form using ajax 
+
+$.ajax({
+type:'post',
+url: '/post/createpost',                 //form action 
+data: newPostForm.serialize(),           //convert the form data into jason ie key value pairs {content: 'fdfndv'}
+
+
+success: function(data){          //succes is fucntion where we recieve data of create post form in json format
+console.log(data) ;             //{ content: 'hey ajax' }
+
+},
+error:function(error){            //error is function wehre we recieve error any
+
+console.log(error.responseText);
+}
+
+})
+})
+
+}
+
+now once submited we will receieved this at createpost controller 
+
+-----after doing this the  req we recive at createpost controller here in req nothhing changes
+similar .  it have body basically req object ( req.body ={content: 'what u enter in post form'}) is same as without 
+ajax ---
+
+so now  in createPost controller everything remains same as previous post colleciton will be populated 
+with data sent from ajax req 
+
+step 9: so why we are here now  here i want to return some json now so that i can use it to manipulate
+dom
+
+module.exports.createpost= async function(req,res){       //first add sync
+
+  try{
+
+  console.log("entering createpost")                     //in console printed this
+  console.log(req.body);                              //entering createpost
+                                                      //{ content: 'deet' }
+let post=await Post.create({                              //let the responce and add await
+content:req.body.content,
+user:req.user._id                  
+
+});
+
+////return json 
+if(req.xhr)
+{
+return res.status(200).json({             //we return json with status //here status is sucseesful as post is created 
+
+data:{
+post:post,                               //right post is the post created in db and recived in let post after query
+
+},
+
+message: "postcreated"                      //whenever we send json we also add message
+
+
+})
+}
+
+
+
+
+req.flash('success','new postcreated ')
+return res.redirect('/');
+
+  }catch(err){
+  console.log("error",err);
+  return;
+
+  }
+}
+
+due to above code 
+console.log(data) js file will print this after this when u click add post on home page
+{data: {,…}, message: "postcreated"}
+data: {,…}
+post: {content: "deet", user: "628596f30b9f32e9448cf0b6", comments: [], _id: "6296acd0f343af0da96ffe1c",…}
+comments: []
+content: "deet"
+createdAt: "2022-06-01T00:03:28.242Z"
+updatedAt: "2022-06-01T00:03:28.242Z"
+user: "628596f30b9f32e9448cf0b6"
+__v: 0
+_id: "6296acd0f343af0da96ffe1c"
+message: "postcreated"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

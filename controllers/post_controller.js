@@ -32,13 +32,31 @@ module.exports.createpost= async function(req,res){       //first add sync
 
   try{
 
-  console.log("entering createpost")
-  console.log(req.body);
+  console.log("entering createpost")                     //in console printed this
+  console.log(req.body);                              //entering createpost
+                                                      //{ content: 'deet' }
 let post=await Post.create({                              //let the responce and add await
 content:req.body.content,
 user:req.user._id                  
 
 });
+
+
+////return json to manipulate dom in js file
+if(req.xhr)                        //finding req is an ajax req (type of ajax req is xhr)
+{
+return res.status(200).json({             //we return json with status //here status is sucseesful as post is created 
+
+data:{
+post:post,                               //right post is the post created in db and recived in let post after query
+
+},
+message: "postcreated"                      //whenever we send json we also add message
+
+})
+}
+
+
 
 req.flash('success','new postcreated ')
 return res.redirect('/');

@@ -5,7 +5,7 @@
         <div class="content">
             <h1>codeial/homepage</h1>
             <%if(locals.user){%>
-            <form action="/post/createpost" method="post">
+            <form action="/post/createpost" id="new-post-form" method="post">
                 <textarea name="content"  cols="30" rows="3"></textarea>
                 <input type="submit" value="post">
                 </form>
@@ -38,3 +38,4 @@
             </div>
     </section>
 
+<script src="/js/home_post.js"></script>
