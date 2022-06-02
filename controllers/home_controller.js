@@ -84,6 +84,7 @@ const User= require('../models/user');
   //and this post part is now awating and any success responce will be stored in let post 
   
   let posts = await Post.find({})                                              //await 1  first this get executed
+  .sort('-createdAt')
   .populate("user")          
   .populate({                       
   path:'comments',               

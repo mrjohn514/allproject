@@ -9,6 +9,14 @@ now to overcome that we are using ajax whenever i submit the form for creating p
 get something in res which is in form of json and append it to our page 
 
 
+                                        importatn in ajax 
+------------------------------------------------------------------------------------------------------------
+baki sb same rhega bs instead of making nomral req we are making ajax requests
+and we are updating the code acc to that there is no change procees that a has link which is mention in 
+route which is mapped to controller no change only req comming to controller will be ajax 
+
+-------------------------------------------------------------------------------------------------------------
+
 
 step 1 : including the jquery cdn in layout becaues we want all other pages also  should able to use 
 jquery 
@@ -137,6 +145,115 @@ message: "postcreated"
 
 
 
+/////////////////////////////////////////////ajax dom manuplation for creating post///////////////////////////////////
+
+
+
+let newPostDom= function(post)
+{
+
+
+ //backtick is feature where i can interpolae strings exampole var x=10 console,log(`ar$(x)`) ar10   
+return $(`
+<div class="card" id="post-${post._id}">        
+    <div class="postcontent">
+
+
+    // do i need to add this check what check is doing it is checing wheater the user is signed in or not
+    // basically when i create post iam signed in oviously and this dom will created at runtime 
+    //and iam allowed to see the delete button as i have created post 
+    //basically the post div will pop up at runtime in page using dom 
+   //pehle jb post create hoti this to ejs me for loop ke throuh post me itreate krke html add
+   //kiya jata tha to tb hme ye check jrrori h 
+
+    //    <% if  (locals.user && locals.user.id == post.user.id ) { %
+  
+        <p><a class="delete-post-button" href="/post/deletepost/${post._id}">x</a></p>
+        
+        // <%}%> 
+
+        <p>${post.content}</p>
+        <p class="uname">postBy:${post.user.name}</p>   
+    </div>
+      <div class="commentform">
+
+    //what check is checking if user is signed in or not before
+     postin comment now i had created a post above so iam already signin
+
+    // <% if (locals.user){%>
+
+
+        <form action="/comment/createcomment" method="post">
+            <input type="text" placeholder="write ur cmt" name="content">
+            <!-- now we also need the send the post id for the comment to save in post: so we send
+             sent it here using hidden so when i click submit content,post will wrap in body and 
+             available at controller in req.body ={content: kkjk,post:difjdk}
+            -->
+            <input type="hidden" name="post" value="${post._id}" >                         
+            <input type="submit" value="comment" >
+         </form>
+
+
+
+        // <%}%>
+
+       <div class="post-comments-list">
+       <ul id="post-comments-${post._id}">
+
+       //now no need of for loop becaue comment will append at runtime when i add comment 
+        // <% for(comment of post.comments){%>
+            
+        //     <%- include('_comment') -%>
+          
+        //     <%}%>
+       </ul>
+       </div>
+
+
+      </div>
+
+    </div>
+
+
+
+
+`)                                                    
+
+
+}
+
+
+
+
+step 2: calling newPostDom function inside succes and passing the receieved json data
+ from controller to  fucntion ab iske call hote hi post diva bn gya h runtime me 
+ ab bs usko add krna h page me so manipulatin div post in home page and appending the newpostdiv
+ to it 
+
+success: function(data){          
+console.log(data) ;             
+
+
+// here data recive in json form from controller is like 
+// {data:{data:{post:{    }   }           }}
+
+let newPost = newPostDom(data.data.post);  //ek nya post diva create ho gya funcion call hote hi
+$('#post-container').prepend(newPost);      //nye post dive ko home page me post container me append kr diya
+
+},
+
+
+
+//basically kr kya rha hun sb cheeje same hn home_page.ejs post.ejs but mai ek same post jaisa dba 
+//jo mai post.ejs me bna rha tha bo ab mai 
+//runtime time me append kr rha hun page me apne post container ke ander 
+//baki sb pehle jasie chl rha h kuch change nhi h ek runtime pe nya post diva add kr diya 
+//post container me 
+//sara ka sara if (user authenitacion for adding post, adding comment same pehle jasie h)
+
+
+
+small thing left to get the post in sorted order the latest post first so using sort in homecontroller
 
 
 
@@ -144,9 +261,134 @@ message: "postcreated"
 
 
 
+---------------------------------------delting post---------------------------------
+
+two things needed to delte post using ajax
+
+1: to able to send data after clicking delete buttion to controller
+2: after confirmation remove the post div using dom 
+
+
+
+step 1 : creating mehtod for deltein post 
+
+let deletePost= function(deleteLink)       //geting the acnchor tag in post for delte
+{
+$(deleteLink).click(function(e){
+
+e.preventDefault;                    //preventing defatult behaviur of anchro tag
+
+$.ajax({
+type:'get',
+url: $(deleteLink).prop('href'),                //geting the href of anchro tag using prop fnction
+
+success:function(data){                            //here data will have post_id sent from controller
+
+ $(`#post-${data.data.post_id}`).remove();          //selecting the post div card using id selector in dom and removing the post  
+
+},
+error:function(error){
+console.log(error.responseText);
+
+
+}
+})
+})
+}
+
+
+
+step2 : now we are only handling /deleting the post which are made at runtime 
+so calling delete mehtod from whrer post is created 
+
+let createPost= function(){
+let newPostForm= $('#new-post-form');
+newPostForm.submit(function(e){    
+
+e.preventDefault();                     
+$.ajax({
+type:'post',
+url: '/post/createpost',                
+data: newPostForm.serialize(),          
+
+success: function(data){  
+          
+  ////////////////////////////////////////////
+console.log(data) ;               
+data: {post_id: '6296f86a9d5c67696da07768'}
+message: "post delted"  
+/////////////////////////////////////////////
 
 
 
 
+let newPost = newPostDom(data.data.post);
+
+$('#post-container').prepend(newPost);
 
 
+ //calling deltepost passing the anchor tag  to  delte post function 
+ //in jquery we have to pass it like this 
+ //this delete-post-button class inside the object newPost 
+
+deletePost($(' .delete-post-button'),newPost);        
+
+
+
+
+},
+error:function(error){          
+
+console.log(error.responseText);
+}
+
+})
+})
+
+}
+
+
+
+step 3: whats missing is we dont have data.post_id for find post in dom and deleting 
+so we have to send this post_id from controller 
+
+
+module.exports.deletepost= async function(req,res)
+{
+try{
+
+  let post= await  Post.findById(req.params.id);  
+  if(post.user==req.user.id){                   
+    post.remove();
+   let comment= await Comment.deleteMany({post:req.params.id}); 
+  
+  
+   if(req.xhr)          //finding req is ajax
+   {
+    return res.status(201).json({         //return data (post_id) in form of json 
+
+  data:{
+    post_id:req.params.id
+  },
+  message:"post delted"
+
+    })
+   }
+
+   req.flash('success','post deleted ')
+   return res.redirect('/');                   //then this exexuted
+    }
+    //if user not match 
+    else
+    {
+        return res.redirect('/');
+    }
+
+
+}catch(err){
+
+  console.log("error",err);
+  return;
+}
+
+}

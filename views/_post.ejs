@@ -1,4 +1,5 @@
-<div class="card">
+<!-- added id so ican use this to delte post -->
+<div class="card" id="post-<%=post._id%>">        
     <div class="postcontent">
 
      <!-- now if user is signed in and and if signed user id == post . populateduser.id  
@@ -11,7 +12,7 @@
        <% if  (locals.user && locals.user.id == post.user.id ) { %>
 
         <!-- //same .id handle by mongoose i could do _id aswell -->  
-        <p><a href="/post/deletepost/<%=post.id%>">x</a></p>
+        <p><a class="delete-post-button" href="/post/deletepost/<%=post.id%>">x</a></p>
         
         <%}%> 
         <p><%=post.content%></p>

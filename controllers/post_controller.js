@@ -131,6 +131,20 @@ try{
    let comment= await Comment.deleteMany({post:req.params.id});  //await 2
   
   
+   if(req.xhr)
+   {
+    return res.status(200).json({
+
+  data:{
+    post_id:req.params.id
+  },
+  message:"post delted"
+
+    })
+   }
+
+
+
    req.flash('success','post deleted ')
    return res.redirect('/');                   //then this exexuted
     
