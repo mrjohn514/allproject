@@ -37,6 +37,21 @@ $('#post-container').prepend(newPost);
  //in jquery we have to pass it like this 
  //this delete-post-button class inside the object newPost 
 
+
+ new Noty({
+  theme:'relax',                //type of noty theme 
+  text: "post created",         //mesage text
+   type: 'success',                        //color scheme 
+   layout: 'topRight',                      //position of flash message 
+   timeout: '1500'                           //time till we want to show flash  1500 milisec
+   
+
+   
+
+}).show();
+
+
+ 
  deletePost($(' .delete-post-button',newPost));    
 
 
@@ -121,6 +136,19 @@ success:function(data){                            //here data will have post_id
 
   console.log(data);
  $(`#post-${data.data.post_id}`).remove();          //selecting the post div card using id selector in dom and removing the post  
+ 
+ new Noty({
+  theme:'relax',                //type of noty theme 
+  text: "post deleted",         //mesage text
+   type: 'success',                        //color scheme 
+   layout: 'topRight',                      //position of flash message 
+   timeout: '1500'                           //time till we want to show flash  1500 milisec
+   
+
+   
+
+}).show();          
+
 
 },
 error:function(error){
@@ -139,11 +167,6 @@ console.log(error.responseText);
 
 
 }
-
-
-
-
-
 
 
 

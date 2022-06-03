@@ -1,0 +1,99 @@
+first task to add noty to js file
+
+as now we dont have to send messages req then put in object now here we added /created noty object
+directly after creating post amd deleing post in js file
+
+
+let createPost= function(){
+let newPostForm= $('#new-post-form');
+
+newPostForm.submit(function(e){    
+
+e.preventDefault();                      
+
+$.ajax({
+type:'post',
+url: '/post/createpost',                 
+data: newPostForm.serialize(),         
+
+
+success: function(data){          
+console.log(data) ;            
+// {data:{data:{post:{    }   }           }}
+
+let newPost = newPostDom(data.data.post);
+
+$('#post-container').prepend(newPost);
+
+///////////////////////////////////////////////////////creating new noty////////////////////
+
+ new Noty({
+  theme:'relax',                //type of noty theme 
+  text: "post created",         //mesage text
+   type: 'success',                        //color scheme 
+   layout: 'topRight',                      //position of flash message 
+   timeout: '1500'                           //time till we want to show flash  1500 milisec
+   
+
+   
+
+}).show();
+
+ deletePost($(' .delete-post-button',newPost));    
+
+},
+error:function(error){          
+
+console.log(error.responseText);
+}
+
+})
+})
+
+}
+
+
+step 2:////////////////////////////adding noty after deltin post 
+
+let deletePost= function(deleteLink)       
+{
+console.log("enterd");
+
+$(deleteLink).click(function(e){
+
+e.preventDefault();                    
+
+$.ajax({
+type:'get',
+url: $(deleteLink).prop('href'),                /
+
+success:function(data){                            
+  console.log(data);
+ $(`#post-${data.data.post_id}`).remove();          
+ 
+ new Noty({
+  theme:'relax',                //type of noty theme 
+  text: "post deleted",         //mesage text
+   type: 'success',                        //color scheme 
+   layout: 'topRight',                      //position of flash message 
+   timeout: '1500'                           //time till we want to show flash  1500 milisec
+   
+
+   
+
+}).show();          
+
+
+},
+error:function(error){
+console.log(error.responseText);
+
+
+}
+
+
+
+})
+
+
+})

@@ -49,7 +49,6 @@ return res.status(200).json({             //we return json with status //here st
 
 data:{
 post:post,                               //right post is the post created in db and recived in let post after query
-
 },
 message: "postcreated"                      //whenever we send json we also add message
 
