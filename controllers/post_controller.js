@@ -45,6 +45,8 @@ user:req.user._id
 ////return json to manipulate dom in js file
 if(req.xhr)                        //finding req is an ajax req (type of ajax req is xhr)
 {
+  post = await post.populate('user', 'name');
+
 return res.status(200).json({             //we return json with status //here status is sucseesful as post is created 
 
 data:{

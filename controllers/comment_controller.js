@@ -41,6 +41,10 @@ const Post=require('../models/post');
 ///-----------------above code to async//////////////
 module.exports.createcomment= async function(req,res){
 
+//  console.log("enterd in createcomment");
+//  console.log(req.body);
+
+
   try {
 
     let post= await Post.findById(req.body.post);      //await 1
@@ -53,7 +57,23 @@ module.exports.createcomment= async function(req,res){
      });
      post.comments.push(comment) 
      post.save();                
- 
+    
+     if (req.xhr){
+      // Similar for comments to fetch the user's id!
+      
+      comment = await comment.populate("user");  //populaitng  comment user to show the name of user who made comment
+      //so that i can acces comment.user.name 
+
+      return res.status(200).json({
+          data: {
+              comment: comment
+          },
+          message: "comment created!"
+      });
+  }
+
+
+
      req.flash('success','new comment added')
     return res.redirect('/');
  

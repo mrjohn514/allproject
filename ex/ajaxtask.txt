@@ -97,3 +97,244 @@ console.log(error.responseText);
 
 
 })
+
+
+
+/////////////////////////////////////second task add/delte comment using ajax//////////////////
+
+
+mistakes iam doing while making create comments 
+
+1. iam unable to show the name of user who made a comment as i pass coment from controller to data
+in  ajax comment.user have id and it is not populated so inside the check i have to poplate the comment.user 
+then pass it 
+   if (req.xhr){
+      comment = await comment.populate("user") ;        //populating user in comment 
+
+      return res.status(200).json({
+          data: {
+              comment: comment
+          },
+          message: "comment created!"
+      });
+  }
+
+
+
+////////////////steps for creating the comment throug ajax//////////////////
+
+step 1 we go to post.ejs and then give id to the form sending comment as to differntiate between all
+other posts comment forms 
+ <form action="/comment/createcomment" id="post-<%= post._id %>-comments-form"  method="post">
+            <input type="hidden" name="post" value="<%=post._id%>" >                         
+            <input type="submit" value="comment" >
+         </form>
+
+
+
+step 2 :adding same id to the post created through ajax manipulatin dom updating that dom function in 
+home_post.js
+
+let newPostDom= function(post)
+{ 
+return $(`
+<div class="card" id="post-${post._id}">        
+    <div class="postcontent">
+        <p><a class="delete-post-button" href="/post/deletepost/${post._id}">x</a></p>
+        <p>${post.content}</p>
+        <p class="uname">postBy:${post.user.name}</p>   
+    </div>
+      <div class="commentform">
+
+
+-->        <form action="/comment/createcomment"      id="post-${ post._id }-comments-form"            method="post">
+            <input type="text" placeholder="write ur cmt" name="content">
+            <input type="hidden" name="post" value="${post._id}" >                         
+            <input type="submit" value="comment" >
+         </form>
+
+
+       <div class="post-comments-list">
+       <ul id="post-comments-${post._id}">
+       </ul>
+       </div>
+      </div>
+    </div>
+`)                                                    
+}
+
+
+step 3: now we came to create post_comment.js file for creation and deltion of comment through 
+ajax
+
+now first creation i have tried to do it like post fetching container and appending but here 
+as there are so many comment forms and iam unable to get post id to find id moreover if i have not
+added the id iam still unbale to as when i put for loop for the fetched comment forms it gives error 
+
+so  i decide to make class and every time post is created i will initialse a new class instance 
+
+
+ class PostComments{
+        constructor(postId){calling createcomment from constructor }
+
+          createComment(postId){  calling newcommentDom from here }
+
+          newCommentDom(comment){ }
+
+}
+
+
+//now every time if we have to execute funciton we need to call them using object and inside class this ->obj
+
+
+
+
+
+
+
+
+
+ class PostComments{
+        // constructor is used to initialize the instance of the class whenever a new instance is created
+        constructor(postId){
+            this.postId = postId;       
+            this.newCommentForm = $(`#post-${postId}-comments-form`);
+            this.createComment(postId);
+    
+        }
+
+}
+
+
+---->now when i create post dynamically using ajax at runtime then i will also create an instance of class
+let obj=  new PostComments(data.data.post._id);
+console.log(obj);
+when this line exexcutes 
+
+object is 
+PostComments {
+postId: '629acb391d832c06b21d5f38', 
+newCommentForm: S.fn.init [form#post-629acb391d832c06b21d5f38-comments-form]
+
+createComment(postId) function called 
+
+}
+
+///////////////////////whats happenig/////////////////////
+1st the postid will be stroed;
+2nd the comment form elemnt is stroed now we can easly do dom manipulation
+3rd now createcomment funciont called inside which  we fetch comment form ,prevent default submtsion of form 
+make a ajac req for form , then recive data at succes funciton sent it to funciont whhre we create 
+same comment looking structre in which we append data through jquery, and this function will return 
+this comment looking structue which we append to container haveing comments like this hence done 
+///////////////////////whats happenig/////////////////////
+
+
+ class PostComments{
+        // constructor is used to initialize the instance of the class whenever a new instance is created
+        constructor(postId){
+            this.postId = postId;
+            this.newCommentForm = $(`#post-${postId}-comments-form`);
+            this.createComment(postId);       //funciton createdcomment called using instace
+    
+        }
+    
+    
+        createComment(postId){
+            console.log("enterd in createcomment funciton");
+            let pSelf = this;
+            console.log("pself",pSelf);
+            // pself 
+            // PostComments {postId: '629ab4ab227297bc1d436089', newCommentForm: S.fn.init(1) }
+            // newCommentForm: S.fn.init [form#post-629ab4ab227297bc1d436089-comments-form]
+            // postId: "629ab4ab227297bc1d436089"
+
+            this.newCommentForm.submit(function(e){
+                e.preventDefault();
+                let self = this;
+    
+                $.ajax({
+                    type: 'post',
+                    url: '/comment/createcomment',
+                    // data: $(this.newCommentForm).serialize(),  //porblem is we are inside .submit callback fxn at line 16 and heres this represents form itself
+                       data:$(self).serialize(), 
+
+                    success: function(data){
+                         
+                        console.log("self",self);
+                        // self
+                        // <form action="/comment/createcomment" id="post-629ab4ab227297bc1d436089-comments-form" method="post">…</form>
+
+                        let newComment = pSelf.newCommentDom(data.data.comment);   //fucntion newcommentDom called usning instance
+                        $(`#post-comments-${postId}`).prepend(newComment);
+                    
+                    
+
+                        new Noty({
+                            theme: 'relax',
+                            text: "Comment published!",
+                            type: 'success',
+                            layout: 'topRight',
+                            timeout: 1500
+                            
+                        }).show();
+                    
+                        
+
+                    }, error: function(error){
+                        console.log(error.responseText);
+                    }
+                });
+    
+    
+            });
+        }
+    
+    
+        newCommentDom(comment){
+            // I've added a class 'delete-comment-button' to the delete comment link and also id to the comment's li
+            return $(`  
+        
+            
+                <p><a href="/comment/deletecomment/${comment.id}">x</a></p>  
+        
+               <p>${comment.content}</p>
+
+               <p class="cmtuser">cmnt by:${comment.user.name}</p>`);
+        }
+
+}
+
+
+
+step 4:now when ajax req made then this reach conteroller and form thre we sent comment to succes funciton 
+in js file 
+
+  
+     if (req.xhr){
+      // Similar for comments to fetch the user's id!
+      comment = await comment.populate("user");          //populaitng  comment user to show the name of user who made comment
+                                                         //so that i can acces comment.user.name 
+      return res.status(200).json({
+          data: {
+              comment: comment
+          },
+          message: "comment created!"
+      });
+  }
+
+  /done 
+
+
+
+
+proces of creating comment in ajax ;
+
+when u made post in home page then a object of class PostComments created hence  
+two funcion also called during this object creation as funcion are called inside class
+henc inside fisrt fucntion ajax req with selceted comment form sent to the createcomment controller 
+here we populate the collectionn comment and then chekc wheter req is xhr or not if yes then we 
+populate the comment user field in oreder use comment.user.name in comment structre created  
+now we reive this at succes funcion in data then we call createcomment structre  and passed this data 
+to this fucntion to show the content, name etc in structre then we append this created structure in 
+container where all other comments of that post resides and hence creaged comment at runtime 

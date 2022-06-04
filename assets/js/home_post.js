@@ -33,6 +33,13 @@ let newPost = newPostDom(data.data.post);
 
 $('#post-container').prepend(newPost);
 
+
+
+ // call the create comment class
+ let obj=new PostComments(data.data.post._id);
+
+  console.log("object is",obj);
+
  //calling deltepost passing the anchor tag  to  delte post function 
  //in jquery we have to pass it like this 
  //this delete-post-button class inside the object newPost 
@@ -87,7 +94,7 @@ return $(`
       <div class="commentform">
 
 
-        <form action="/comment/createcomment" method="post">
+        <form action="/comment/createcomment" id="post-${ post._id }-comments-form" method="post">
             <input type="text" placeholder="write ur cmt" name="content">
             <input type="hidden" name="post" value="${post._id}" >                         
             <input type="submit" value="comment" >

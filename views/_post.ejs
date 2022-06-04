@@ -20,7 +20,7 @@
     </div>
       <div class="commentform">
     <% if (locals.user){%>
-        <form action="/comment/createcomment" method="post">
+        <form action="/comment/createcomment" id="post-<%= post._id %>-comments-form"  method="post">
             <input type="text" placeholder="write ur cmt" name="content">
             <!-- now we also need the send the post id for the comment to save in post: so we send
              sent it here using hidden so when i click submit content,post will wrap in body and 
@@ -46,3 +46,5 @@
       </div>
 
     </div>
+
+  
