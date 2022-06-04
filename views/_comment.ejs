@@ -3,10 +3,13 @@
          to  received comments in post.comment[{ now populated}] (comment.user.id) 
          this tells to show x onlly on those comments which are made by signed in user -->
 
+      <div id="comment-chip-<%=comment._id%>">
 
          <% if (locals.user && locals.user.id ==comment.user.id){  %>
-            
-            <p><a href="/comment/deletecomment/<%=comment.id%>">x</a></p>  
-            <%}%>
-           <p><%=comment.content%></p>
-           <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
+
+               <p><a href="/comment/deletecomment/<%=comment.id%>" class="delete-comment-button">x</a></p>  
+               <%}%>
+              <p><%=comment.content%></p>
+              <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
+
+     </div>

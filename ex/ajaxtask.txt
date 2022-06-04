@@ -338,3 +338,82 @@ populate the comment user field in oreder use comment.user.name in comment struc
 now we reive this at succes funcion in data then we call createcomment structre  and passed this data 
 to this fucntion to show the content, name etc in structre then we append this created structure in 
 container where all other comments of that post resides and hence creaged comment at runtime 
+
+
+
+
+
+------------------------------------------comment deletion--------------------------------------
+
+deleiton of comment in ajax is very very simple similar to post deltion 
+
+
+step1 : create  a fucntion to delte the post  in js file this fucntion will recive the element basically 
+anchor tag on which click we made ajax req 
+
+first to get anchor element we need to add class to anchro tage inside comment.ejs
+  <p><a href="/comment/deletecomment/<%=comment.id%>" class="delete-comment-button">x</a></p> 
+
+
+  step2 :we also have to put all the things of comment inside the div so that we can remove this 
+  div and everything gets delted 
+    <div id="comment-chip-<%=comment._id%>">
+         <% if (locals.user && locals.user.id ==comment.user.id){  %>
+               <p><a href="/comment/deletecomment/<%=comment.id%>" class="delete-comment-button">x</a></p>  
+               <%}%>
+              <p><%=comment.content%></p>
+              <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
+     </div>
+  
+
+  step :3 we also have to add class to anchro tags in create comment dom 
+   newCommentDom(comment){
+            // I've added a class 'delete-comment-button' to the delete comment link and also id to the comment's li
+            return $(`  
+            <div id="comment-chip-${comment._id}">
+            <p><a href="/comment/deletecomment/${comment._id}" class="delete-comment-button">x</a></p>  
+            <p>${comment.content}</p>
+            <p class="cmtuser">cmnt by:${comment.user.name}</p>
+             </div>
+     `);
+        }
+
+
+
+    step :4 now we create a fucntion name deletecomment and call this right after we created comenta
+    and as we are calling this inside class we have to calll this with object 
+
+      pSelf.deleteComment($(' .delete-comment-button',newComment));
+
+      //calling delete and passing anchor elemtn to fucntiion so we preentdefa
+     //defautl behavioiur make ajax req recive data  which conatian comment id which is used to select  the conatiner having comment 
+     //as the contaienr have id in whcih comment id used so to select that elemen we need to 
+    //write $('#continer-comment-id') we have appended this comment id in id so to identify the conainters 
+                        
+
+        step 5 funcion deletcomment making
+         deleteComment(deleteLink){
+            $(deleteLink).click(function(e){
+                e.preventDefault();
+    
+                $.ajax({
+                    type: 'get',
+                    url: $(deleteLink).prop('href'),
+                    success: function(data){
+                        $(`#comment-chip-${data.data.comment_id}`).remove();
+    
+                        new Noty({
+                            theme: 'relax',
+                            text: "Comment Deleted",
+                            type: 'success',
+                            layout: 'topRight',
+                            timeout: 1500
+                            
+                        }).show();
+                    },error: function(error){
+                        console.log(error.responseText);
+                    }
+                });
+    
+            });
+        }                
