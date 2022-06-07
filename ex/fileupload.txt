@@ -1,0 +1,257 @@
+now how these files are uploaded in website 
+
+lets there a client/browser annd server which is stored on an os now on your profile page u select picture annd
+send it to servre as picture is a long stream of bytes now how we are gona stored this picture at server side
+
+--> we dont stor it in db we store it seperatly we create another folder 
+lets say uploads/users/avatars  
+
+-->whenever i recieve a file in server i store it in this foldre and path to  that filein db
+
+
+------------------------------------------input type file and multipart data----------------------------
+
+  there is inputtype = file  in form how it works we put an attribue encyrption type and teel thta form can 
+  have multipart data it can have text ass well as files also  
+
+
+
+
+
+  step 1:  install multer to your project 
+  npm install multer
+  
+  step 2: add inputtype file to profile form in profile.ejs
+ 
+    <!-- we have added enctype attribute which will tell form can send text as well file  -->
+
+       <form action="/user/updateprofile/<%=profile_user.id%>" enctype="multipart/form-data" method="post">
+           <!-- value attribute will have the current user name,email value who is logged in showing in fields   -->
+          <input type="text" name="name" placeholder="entername" value="<%=profile_user.name%>" required >  
+          <input type="email" name="email" placeholder="email" value="<%=profile_user.email%>" required >
+          <input type="file" name="avatar" placeholder="profilepic">
+          <input type="submit" value="update">
+
+       </form>
+
+
+       step3:now we have to update our user model as new filed in added and db shcmea has ony three
+        added multer to this file 
+        addded path to this file
+        set the var having path of file
+
+    now we want to update our schema as we are sauyin that we have to store the path of file in db
+    so adding that field in db schema 
+    const mongoose = require('mongoose');
+
+
+//why are we importing multer here and not seting  in config folder because we are uploading 
+//that file specific to user and we will have specific setting for eg: 
+//user avatar will uploaded at different place 
+
+//requiring multer 
+const multer=require('multer');
+const path=require('paht');          //also neede as we will setting the path where file will be stored 
+
+const AVATAR_PATH = path.join('/uploads/users/avatars') ;  //var storing the path of file //defining path 
+
+const userSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    name: {
+        type: String,
+        required: true
+    },
+ 
+   avatar:{            //field to store the path of file in db
+   type:String,
+   
+   }
+
+
+}, {
+    timestamps: true
+});
+const User = mongoose.model('User', userSchema);
+module.exports = User;
+
+
+step 4: next step is connect/link the avatar field ,AVATAR_PATH and multer basically whenever i recive a
+file at server it saves at folder with path AVATAR_PATH and the path of that file will get 
+ stored in avatar field also 
+
+
+-->first we will set the setting to store the file over AVATAR_PATH  
+
+--------------------------------------------------------------------------------------------------------------
+                                                multer configration 
+
+let storage = multer.diskStorage({
+
+    //have two objects destination and filename 
+    //here req, filefrom the req and callback funciotn 
+
+    destination: function (req, file, cb) {
+
+     //callback funciton have first arg null and other path where file need to be stored
+      cb(null, paht.join(__dirname, '..', AVATAR_PATH));   //   __dirnaame+..+uploads/users/avatars -->      
+    },
+
+
+    //used to define what would be name of file  stored at AVATAR_PATH
+    //now image can have same names inorder to remove that situation we use datenow
+    //datenow gives time  and it is everytime changing in miliconds also called epoc
+    //file.fieldname+ '_' + datenow() --->resolved to  avatar_1273927328 ///here this time is also called epoc
+
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+  })
+
+
+---------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+step 5 : now we need to create static functions inside the user model after seeting disk storage 
+
+//creating static funtions and propoerties to access
+//this static funtion is acceble by modelname.static fxn()  --->   User.uploadedAvatar();
+//basically when iam using AVATAR_PATH in controler iam getting AVATAR_PATH not defined 
+//because here iam exporting  User model and u know how exporting works  not whole file sepcific funtins
+//propoerties can be exported 
+//so  i have to make some static properties (avatarPath) and methods inside the userSchema.statics so that
+//my model User whre iam requiring it can access these poperties and methods if u know export u will understand
+
+
+
+
+//here uploadedAvatar is static function  hree  multer({storage : storage}) this basically attaches  let storage = multer.diskStorage({})
+//the diskstorage on multer and mapped it to the storage property  
+
+//i have defined multiple properties/methods  like .diskstorage and now i need to assign it to 
+//multer  of this project   by( multer({storage:storage}))
+
+//here single means or signifies only single file will be uploaded at time 
+userSchema.statics.uploadedAvatar=  multer({storage:storage}).single('avatar')
+
+
+//static property what i want  i need AVATAR_PATH to be available publicly for the user model 
+userSchema.statics.avatarPath=AVATAR_PATH;
+
+
+step 6: after this i need to set up my controller  also converted to async awat 
+
+module.exports.updateuser= async function(req,res){
+
+if(req.user.id==req.params.id)
+ {
+ 
+    try{
+   let user= await User.findById(req.params.id);
+   //once teh user have been found i need to update the user  
+  //but here now when i want to acces the body params i am unable to acces these directly because my form
+  //is a multipart form  so my bodyparrser is unable to parse the data recived from form now the 
+  //function uploadedavatar will going to help us 
+
+  //here multer will autmatically take req and process it bas
+  User.uploadedAvatar(req,res,function(err){     
+
+  if(err){console.log("multer err",err);}
+
+
+// when we reach this line file will be already setted up by multer 
+// console.log(req.file);         //req contain the file from the form after processed by multer 
+//   {
+//     fieldname: 'avatar',
+//     originalname: 'istockphoto-476085198-170667a.jpg',
+//     encoding: '7bit',
+//     mimetype: 'image/jpeg',
+//     destination: 'D:\\COD2\\sd2\\main\\uploads\\users\\avatars',
+//     filename: 'avatar-1654636121105-612506960',
+//     path: 'D:\\COD2\\sd2\\main\\uploads\\users\\avatars\\avatar-1654636121105-612506960',
+//     size: 18076
+//   }
+
+
+
+//also i can read my data from body params as req is proccesed by multer
+
+  user.name=req.body.name;
+  user.email=req.body.email;
+
+ if(req.file)         //why this check because not every time user is uploading file with other detials like name etc
+{
+//this is saving the path of uploaded file in the avtar filed fo document user 
+user.avatar = User.avatarPath + '/' + req.file.filename;
+}
+
+user.save();
+
+return res.redirect('back');
+
+  })
+
+
+    }catch(err){
+        req.flash('error',err);
+    return res.redirect('back');  
+
+    }
+ 
+
+ }
+
+else{
+    req.flash('error','unauthorise');
+    return res.status(401).send('unauthorise');       //http statuus codes 
+}
+
+}
+
+
+
+
+
+step 7 : now i want to show the uploaded photo on my profile page so just changeing my 
+userprofile.ejs
+     <!-- as i have added userin local and user also have avatar field which will have image path -->
+    <img src="<%=user.avatar%>" alt="no image"  width="100" height="100">
+
+
+    if i now click update button iam gettin error      
+          Failed to load resource: the server responded with a status of 404 (Not Found)
+
+-->why this is havppenig browser is  making get  request and we have no such route and server is not able to find it 
+ GET /uploads/users/avatars/avatar-1654640994982-276343648
+
+when porfilepage.ejs is rendered it have image tag 
+<img src="\uploads\users\avatars/avatar-1654643239231-962910287" alt="no image" width="100" height="100">
+
+browser making get req to this source 
+http://localhost:8000/user/userprofile/\uploads\users\avatars/avatar-1654643239231-962910287
+
+but our srver has no such route for handlling that req 
+so
+ //either we can create a route for it 
+ //or we need to decalre this path to be availbel so when browser asks for it it is available already
+
+ a very simple thing is to make available path to browser
+ 
+                    // express.static(__dirnaame) + '/uploads'  ---->main/uploads
+ app.use('/uploads',express.static(__dirnaame) + '/uploads')
+
+now whenever browser encounter path  /uploads then it will got to main/uploads folder 
+main/uploads   basically /uploads will be main/uploads/.....

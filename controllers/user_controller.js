@@ -30,25 +30,92 @@ module.exports.profile=function(req,res)
 }
 
 
-module.exports.updateuser= function(req,res){
+// module.exports.updateuser= function(req,res){
+// //checking if user is authorise to make update requesting 
+// //basically signed user == sending update req user 
+// if(req.user.id==req.params.id)
+// {
+//     // req.body is same as it= {name:req.body.name,email:req.body.email}  so instead of writing this req.body
+// User.findByIdAndUpdate(req.params.id,req.body,function(err,user){
+// if(err){console.log("errrrrrr");return}
+// return res.redirect('/');
 
-//checking if user is authorise to make update requesting 
-//basically signed user == sending update req user 
+// })       
+// }
+
+// else{
+//     return res.status(401).send('unauthorise');       //http statuus codes 
+// }
+
+//}
+
+// ------------------------------------------asycn converted below------------------
+
+
+module.exports.updateuser= async function(req,res){
+
 if(req.user.id==req.params.id)
-{
-    // req.body is same as it= {name:req.body.name,email:req.body.email}  so instead of writing this req.body
-User.findByIdAndUpdate(req.params.id,req.body,function(err,user){
-if(err){console.log("errrrrrr");return}
-return res.redirect('/');
+ {
+ 
+    try{
+   let user= await User.findById(req.params.id);
+   //once teh user have been found i need to update the user  
+  //but here now when i want to acces the body params i am unable to acces these directly because my form
+  //is a multipart form  so my bodyparrser is unable to parse the data recived from form now the 
+  //function uploadedavatar will going to help us 
 
-})       
+  //here multer will autmatically take req and process it bas
+  User.uploadedAvatar(req,res,function(err){     
+
+  if(err){console.log("multer err",err);}
+
+
+// when we reach this line file will be already setted up by multer 
+// console.log(req.file);         //req contain the file from the form after processed by multer 
+//   {
+//     fieldname: 'avatar',
+//     originalname: 'istockphoto-476085198-170667a.jpg',
+//     encoding: '7bit',
+//     mimetype: 'image/jpeg',
+//     destination: 'D:\\COD2\\sd2\\main\\uploads\\users\\avatars',
+//     filename: 'avatar-1654636121105-612506960',
+//     path: 'D:\\COD2\\sd2\\main\\uploads\\users\\avatars\\avatar-1654636121105-612506960',
+//     size: 18076
+//   }
+
+
+
+//also i can read my data from body params as req is proccesed by multer
+
+  user.name=req.body.name;
+  user.email=req.body.email;
+
+ if(req.file)         //why this check because not every time user is uploading file with other detials like name etc
+{
+//this is saving the path of uploaded file in the avtar filed fo document user 
+user.avatar = User.avatarPath + '/' + req.file.filename;
 }
+
+user.save();
+
+return res.redirect('back');
+
+  })
+
+
+    }catch(err){
+        req.flash('error',err);
+    return res.redirect('back');  
+
+    }
+ 
+
+ }
 
 else{
+    req.flash('error','unauthorise');
     return res.status(401).send('unauthorise');       //http statuus codes 
 }
-
-
 
 }
 

@@ -2,18 +2,22 @@
 <section >
     <div class="content"> 
     
+         <!-- as i have added userin local and user also have avatar field which will have image path -->
+    <img src="<%=user.avatar%>" alt="no image"  width="100" height="100">
+
      <!-- here we are not checking if(locals.user) becaues it is sure user cant view his profile page
      without login as we have added in passport.checkaAuthenticaiton chek so we know if user is in profile
      he is loged in 
     -->
               
         <% if(user.id==profile_user.id){%>
-  <!-- if user matches i will show form for updation -->
 
-       <form action="/user/updateprofile/<%=profile_user.id%>" method="post">
+    <!-- we have added enctype attribute which will tell form can send text as well file  -->
+       <form action="/user/updateprofile/<%=profile_user.id%>" enctype="multipart/form-data" method="post">
            <!-- value attribute will have the current user name,email value who is logged in showing in fields   -->
           <input type="text" name="name" placeholder="entername" value="<%=profile_user.name%>" required >  
           <input type="email" name="email" placeholder="email" value="<%=profile_user.email%>" required >
+          <input type="file" name="avatar" placeholder="profilepic">
           <input type="submit" value="update">
 
        </form>

@@ -6,7 +6,7 @@
             this.newCommentForm = $(`#post-${postId}-comments-form`);
             this.createComment(postId);       //funciton createdcomment called using instace
             
-        
+            
         }
     
     

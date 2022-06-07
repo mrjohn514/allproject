@@ -122,6 +122,10 @@ app.use('/', require('./routes'));
 // to use static files, present in assets directory
 app.use(express.static('assets'));
 
+
+//make the uploads path available to the browser
+app.use('/uploads',express.static(__dirname + '/uploads'));
+
 // Setting express to listen to port 8000
 app.listen(port, function(err){
     if(err){
