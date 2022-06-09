@@ -255,3 +255,98 @@ so
 
 now whenever browser encounter path  /uploads then it will got to main/uploads folder 
 main/uploads   basically /uploads will be main/uploads/.....
+
+
+
+
+
+
+---------------------------------edge case left as every time file is saved in folder when updating  -------
+
+
+we have addded a check if (user.avatar) this is already have value means there is already image in 
+uploads 
+and now if i update i want to delte that previous image in upload folder to avoid collecting so much irrevalent 
+data
+
+//handling edge case every time updating image is saving so if there previusly exist a image 
+//remove that and 
+//now to delete file we need file system module
+//and also we need path of file so path module 
+//so import both here   
+if(user.avatar)                    //if there is already value in avatar field of user 
+{
+fs.unlinkSync(path.join(__dirname,'..',user.avatar))   // ->>resolved to usercontroller two step up we reach parallel to uploads heriachy then user.avatar =uploads/users/avatar/image
+
+}    
+
+
+
+let say u are john and already uploaded image then ur lcoal user will have 
+{
+  _id: new ObjectId("628596f30b9f32e9448cf0b6"),
+  email: 'mrjohn7861@gmail.com',
+  password: '123',
+  name: 'mrjohnishere',
+  createdAt: 2022-05-19T01:01:39.515Z,
+  updatedAt: 2022-06-08T17:31:19.546Z,
+  __v: 0,
+  avatar: '\\uploads\\users\\avatars/avatar-1654709479540-374565302'
+}
+
+now when i again click upate i reach above if condtion and checked if exeist yes exist there 
+then it is removed form upldoad folder 
+
+and then newcomed image path will be saved in user,avatar and it will beocme 
+{
+  _id: new ObjectId("628596f30b9f32e9448cf0b6"),
+  email: 'mrjohn7861@gmail.com',
+  password: '123',
+  name: 'mrjohnishere',
+  createdAt: 2022-05-19T01:01:39.515Z,
+  updatedAt: 2022-06-08T17:31:19.546Z,
+  __v: 0,
+  avatar: '\\uploads\\users\\avatars/avatar-1654709479540-123344484'
+}
+
+
+
+
+------------------------------------------------------------------------------------------------------------
+now when i first time login and yet i havnt upload any image from this login id abubarwal then 
+console.log(req.user) will print
+{
+  _id: new ObjectId("628a940e538cb10e25f485ad"),
+  email: 'abubarwal786@gmail.com',
+  password: '123',
+  name: 'victor',
+  createdAt: 2022-05-22T19:50:38.783Z,
+  updatedAt: 2022-05-22T19:50:38.783Z,
+  __v: 0
+}
+
+
+and as i upload image through this userid abubarwal
+and then come to home then
+console.log(req.user) wil proint
+{
+  _id: new ObjectId("628a940e538cb10e25f485ad"),
+  email: 'abubarwal786@gmail.com',
+  password: '123',
+  name: 'victor',
+  createdAt: 2022-05-22T19:50:38.783Z,
+  updatedAt: 2022-06-08T17:27:08.915Z,
+  __v: 0,
+  avatar: '\\uploads\\users\\avatars/avatar-1654709228900-860837503'
+}
+
+
+
+
+
+
+
+
+
+
+

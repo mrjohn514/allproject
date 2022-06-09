@@ -1,7 +1,9 @@
 //we need our model/collection so that we can create user into it so requring our collection/model
 const User=require('../models/user')
 
+const fs=require('fs');
 
+const path=require('path');
 
 // module.exports.profile=function(req,res)
 // {
@@ -92,6 +94,23 @@ if(req.user.id==req.params.id)
 
  if(req.file)         //why this check because not every time user is uploading file with other detials like name etc
 {
+
+  
+//handling edge case every time updating image is saving so if there previusly exist a image 
+//remove that and 
+//now to delete file we need file system module
+//and also we need path of file so path module 
+//so import both here   
+if(user.avatar)                    //if there is already value in avatar field of user 
+{
+
+//her our upload folder must have one image already exists in order to work otherwise 
+
+fs.unlinkSync(path.join(__dirname,'..',user.avatar))   // ->>resolved to usercontroller two step up we reach parallel to uploads heriachy then user.avatar =uploads/users/avatar/image
+
+}    
+
+
 //this is saving the path of uploaded file in the avtar filed fo document user 
 user.avatar = User.avatarPath + '/' + req.file.filename;
 }
