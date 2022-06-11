@@ -1,3 +1,5 @@
+//main routes requiring file of all project 
+
 const express = require('express');
 
 // Setup router
@@ -19,6 +21,13 @@ router.use('/post',require('./post'));
 
 
 router.use('/comment',require('./comments'));
+
+
+//telling api folder to user when req with /api
+
+router.use('/api',require('./api'));
+
+
 
 // Exporting router
 module.exports = router;

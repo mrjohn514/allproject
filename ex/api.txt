@@ -1,0 +1,380 @@
+
+when we want two devices to communicate with minimal resources one of concept use is api
+applcation programming interface
+                  
+
+                  json
+device a ----------------------------------------device  (communicate using prticular formats nowdays json)
+
+
+josn is basically object key value pairs
+{    
+..====
+..====
+}
+
+
+
+lets say server A ------------------------------  android device B
+
+now this android device  b has app instlled from playstore example spotify then this app will have all the design 
+of all acreens like homescreen , singleplayrer screen and what data (songs/video )need to displayed by 
+request http req 
+
+whenever i touch the play button the name ,acutal content of video gets laoded  to the designs 
+ocnce req completed 
+
+as andrid device is capable of storing videos but why to i only want to store the desing and whenever he 
+need to play something it will be added to desings through req
+
+
+other usecases the frontend frameworks like angular react  examole where we use api to interact with 
+server and client
+
+
+
+
+----------------------------------------------------------------------------------------------------------
+
+though api are usually used when we are interacting using frontend frameworks but here we have not set a 
+frontend framework 
+we can acces apis using browser,
+but we will use a tool postman which will act as frontend framework /android device for using apis and also
+able to sent authenticated req using postman
+
+
+downloaded postman
+----------------------------------------------------------------------------------------------------------
+
+
+first part of creating api is seting directory structure so that our code which sends the response in 
+and accept req in api format is in sepeate files so we are trying to seperete out code to deal with apis
+
+
+step 1 : creating the api folder inside controllers and api folders inside routes 
+
+now we also create folder v1 inside both what is this these are versions of api
+for example
+ thre are set1 of people who are using application with  api/v1 
+thre are set2 of people who downloaded latest version having lates updates in application and using api/v2
+
+say user has image field called avatar in v1 version and in v2 it is called profile pic so what should i do
+in api/v1 i will keep  the field name to be avatar when here user info goes {avatar:}
+
+and in api/v2 field is renamed to profile pic   and when here user info goes {profile pic:}
+
+and as all my users of set 1 upadtes to lates version i will remove api/v1
+
+--------------------------------------------------------------------------------------------------------------
+
+step 2: api folder will have their own index.js and so will the v1 folder have and the role of these will
+same as of indes.js in routes folder which requires all other routes and tells app.js these routes are
+availbale 
+
+
+
+step 3: first lets make sure our main routes folder index file know about these api folder 
+
+//telling api folder to user when req with /api
+router.use('/api',require('./api'));
+
+
+
+step 4: now our api index.js will require all the routes for v1,v2 folders 
+const express = require('express');
+const router = express.Router();
+
+router.use('/v1',require('./v1'));
+
+module.exports=router;
+
+
+
+
+
+step 5 : creating postapi controler inside controller/api/v1  folder 
+
+//controler which wil return json data when api req is made through browser
+module.exports.index=function(req,res){
+
+    return res.json(200,{                          //json(succes,{data})
+
+    message:"list of posts",
+    post:[]
+
+    })
+}
+
+
+
+
+step 6:making route for this post_api controller for that creating post.js file inside 
+routes/api/v1 folder 
+now inside this file mapping route with  apipost controller
+
+const express = require('express');
+const router = express.Router();
+const postapicntroller= require('../../../controllers/api/v1/post_api')  //requiring postapi controler 
+
+router.use('/',postapicntroller.index);    //mapping postapicontroler to route
+
+module.exports=router;
+
+
+
+step 7:using/requiring posts file routes inside index.js of v1 
+
+const express = require('express');
+const router = express.Router();
+router.use('/posts',require('./posts'));  //requirng routes from post file
+
+module.exports=router;
+
+
+
+step: 8 fetching post from db and sending it as json 
+module.exports.index= async function(req,res){
+
+    let posts = await Post.find({})       //finding posts in db and sending ti as json
+    .sort('-createdAt')
+    .populate("user")          
+    .populate({                       
+    path:'comments',               
+    populate:{
+        path:'user'             
+    }
+    });
+
+    return res.json(200,{                          //json(succes,{data})
+
+    message:"list of posts",
+    post:posts
+
+    })
+}
+
+
+
+-------------------------------------------------------------------------------------------------------------
+authentication with apis
+we are using json web tokens jwt 
+whenever u are sending username and passoeord identity is verified and one token is genreted
+
+jwt consist of three parts  header.payload.signature   
+
+header contain what algo uses to encrypt jwt token
+payload contains acutal encrypted info (data)
+signature 
+
+this token is passed on to my android device/forntend framework and it get stored in locla storage of android device 
+every time req is made  i send thsi jwt in header to server  and no need to store this as itsel conatin info
+
+
+-------------------------------------------------------------------------------------------------------
+step 8 :setting up passport jwt 
+
+step 1 installing jwt strategy 
+npm instal passport-jwt
+
+stpe 2 we have to mention every strategy we are using in index.js main 
+const passportjwt=require('./config/passport-jwt');
+
+step 3 creating new file for jwt strategy configuration 
+//step 1 import passport
+const passport = require("passport")
+
+//requiring strateguy using
+const jwtStrategy=require('passport-jwt').Strategy;
+
+//module help us to extract jwt from header
+const Extractjwt=require('passport-jwt').ExtractJwt;
+
+
+//since we are going to use user model for authenctication 
+const User=require('../models/user'); 
+
+
+//while defineing strategy i will have some options
+//first how do i encrypt 
+
+let opsts={
+ //now header is  list ofkeys header has key called 
+ //authorisation that is also a list ofkey that can have key called bearer now that bearer will have
+//jwt token   
+    jwtFromRequest:Extractjwt.fromAuthHeaderAsBearerToken,
+    secretOrKey:'codeial'   
+    
+}
+
+
+passport.use(new jwtStrategy(opts,function(jwtpayload,done){   //callback funtion which reads data from jwt payload     
+
+
+//finding user by id and sending throuh callbakc funciton done 
+//hre we are not mathcig user password or email like in local strategy 
+//because here we are doing/mathcing jwt thing 
+//once user jwt is generated this  is used after that with req to authenitcate the jwt 
+
+//previoulsy we are mathcing email and passwrod and fetching user and set it in cookiew
+//haere user is already present in jwt and we are fetching id from payload checking if user is
+//there or not in db with every req
+
+User.findById(jwtpayload._id,function(err,user){           
+
+if(err){console.log("errir ifnding user");return}
+if(user)
+{ 
+    return done(null,user);
+}
+else{
+    return done(null,false);
+}
+})
+}))
+
+module.exports=passport;
+
+
+
+
+step 9:we are going to user createsession and modifie it to return token in json to client/frontend
+here we are expolictyly created jwt and send it 
+so we are using another library
+
+: npm install jsonwebtoken     ->>basically used to generate token
+
+
+step 10 creating userapi controler in api/v1 of controllers
+//need User 
+const User=require('../../../models/user');
+
+//rquiring jsonwebtonken library
+const jwt=require('jsonwebtoken');
+
+
+
+module.exports.createsession=async function(req,res)
+{
+//whenever a user email or password is recibed  we need to find user and
+ genereate jwt corresponding to that user
+try{
+    let user= await User.findOne({email:req.body.email});
+  if(!user || user.password!=req.body.password)  //if no user and password dont match
+  {
+return res.json(422,{
+    message:"invalid username or password"
+})
+  }
+  return res.json(200,{
+      message:"this is your genereated token",
+      data:{
+
+        //founded user wil converted to json then this sign fucntion will ecncrypt this user using 
+        //key codeial 
+          token: jwt.sign(user.toJSON(),'codeial',{expiresIn:'10000'})         
+      }
+  })
+}catch(err)
+{
+console.log("errorororo",err);
+return res.json(500,{                   ///also return json like this  without using status keyword
+message:"internal server erro"
+
+});
+}
+}
+
+
+step 11 : we need route for this controller creating user.js inside routes/api/v1 
+    
+const express = require('express');
+const router = express.Router();
+const userApicontroler=require('../../../controllers/api/v1/user_api');
+router.use(express.urlencoded({ extended: true }));
+router.post('/create-session',userApicontroler.createsession);  //mapping conrtoler to route
+module.exports=router;
+
+
+
+step 12 making post req using tool postman and recive a json with jwt 
+{
+    "message": "this is your genereated token",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjg1OTZmMzBiOWYzMmU5NDQ4Y
+        2YwYjYiLCJlbWFpbCI6Im1yam9objc4NjFAZ21haWwuY29tIiwicGFzc3dvcmQiOiIxMjMi
+        LCJuYW1lIjoibXJqb2huaXNoZXJlIiwiY3JlYXRlZEF0IjoiMjAyMi0wNS0xOVQwMTowMTozOS41MT
+        VaIiwidXBkYXRlZEF0IjoiMjAyMi0wNi0wOFQxNzozMToxOS41NDZaIiwiX192IjowLCJ
+        hdmF0YXIiOiJcXHVwbG9hZHNcXHVzZXJzXFxhdmF0YXJzL2F2YXRhci0xNjU0NzA5NDc5NTQwLT
+        M3NDU2NTMwMiIsImlhdCI6MTY1NDkwODkyOCwi
+        ZXhwIjoxNjU0OTA4OTM4fQ.ql5T0z6sY9fXoPiGoBTq4khbd6fR1CpxS2TTjmh9pkY"
+    }
+}
+
+token sepeated by dots thre parts 
+
+
+step 13: making delte req from postman and then it get authenitcated using token we created 
+and then we are able to delte post by sendin delte req from postman tool 
+
+
+create controller for delteing post
+//use this to delte post using api token generated 
+module.exports.deletepost= async function(req,res)
+{
+try{
+
+  let post= await  Post.findById(req.params.id);  //await 1   receve responce in let and add await to query
+
+  console.log("enterdhere ",req.user);
+  console.log("psot user",post);
+  if(post.user==req.user.id){                 
+  
+    post.remove();
+    
+    
+    await Comment.deleteMany({post:req.params.id});  //await 2
+  
+    return res.json(200,{
+        message:"post and ocmment delted"
+    })
+           
+    
+    }
+    
+    //if user not match 
+    else
+    {
+        return res.json(401,{
+            message:"not authorise to delte post"
+        })
+    }
+    
+}catch(err){
+  console.log("error",err);
+  return res.json(500,{
+      message:"internal servel erro in delte "
+  });
+}
+
+}
+
+
+step 14 making route for this controller and mapp it
+//we will tell what strategy is to use and dont want session cookie to be generated 
+router.delete('/:id',passport.authenticate('jwt',{session:false}),postapicntroller.deletepost);
+
+
+
+step 1 :first i made get req and genrete token 
+router.post('/create-session',userApicontroler.createsession);
+
+step 2 then using this token i send this in delte req header 
+
+//we  reacg this route 
+and authencticate executed when this run req in delete conrtoler will have req.user 
+//also this user is not created after we sign in this is without we have signed in in req 
+//so this is added after this passport.authencticate executed and then 
+//call transfer to delte controler 
+
+
+router.delete('/:id',passport.authenticate('jwt',{session:false}),postapicntroller.deletepost);
