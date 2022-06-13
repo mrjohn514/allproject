@@ -372,6 +372,7 @@ step 2 then using this token i send this in delte req header
 
 //we  reacg this route 
 and authencticate executed when this run req in delete conrtoler will have req.user 
+//basically user set in req by this authencticate
 //also this user is not created after we sign in this is without we have signed in in req 
 //so this is added after this passport.authencticate executed and then 
 //call transfer to delte controler 

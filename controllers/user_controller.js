@@ -231,6 +231,7 @@ module.exports.createuser=function(req,res)
 //when passport use fxn localstrategy to authenticate the user the control comes over here  
 module.exports.createsession=function(req,res)
 {
+    console.log("this is inside createsession");
     console.log("createseiion",req.body);
     // The method req.flash(type, message) sets the value of new flash mesage provided by modeule we insatlled
   req.flash('success','loged in succesfully');       //we know req is an object and we are seting flash fucntion inside req object 

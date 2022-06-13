@@ -78,6 +78,7 @@ const User= require('../models/user');
 
  module.exports.home= async function(req,res){                                
   
+  console.log("hey we arein home controller")
   console.log(req.user);  //jaise hi sign in hota h user local me set ho jata h passport ke through jo hmne kiya tha
   //wihtout login ye undefinde print krega or jjaise hi loogin user ko print kreaga 
 

@@ -20,6 +20,7 @@ const session =require('express-session');
 const passport = require('passport');
 const passportlocal=require('./config/passport-local-strategy');
 const passportjwt=require('./config/passport-jwt');
+const passportgoogle=require('./config/passport-google-auth2-strategy');
 
 //requiring connectmongo libraray to store sessions in mongodb 
 const MongoStore= require('connect-mongo');
