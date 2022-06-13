@@ -3,6 +3,9 @@ const Comment=require('../models/comment');
 
 const Post=require('../models/post');
 
+
+const commentMailer=require('../mailers/comment_mailer');
+
 // module.exports.createcomment=function(req,res){
 // //now to create a comment over post we need to find weateher that post exists or not for example
 // //anyone can change the value of post id in inspect and we will get error 
@@ -57,12 +60,14 @@ module.exports.createcomment= async function(req,res){
      });
      post.comments.push(comment) 
      post.save();                
-    
-     if (req.xhr){
-      // Similar for comments to fetch the user's id!
       
-      comment = await comment.populate("user");  //populaitng  comment user to show the name of user who made comment
-      //so that i can acces comment.user.name 
+     comment = await comment.populate("user");  //we just put it outside because we want to populate even
+     //if the req is not xhr it will populate every time irerespective of req
+
+    //callling new comment  and passing comment created 
+    commentMailer.newComment(comment)  ;
+
+     if (req.xhr){
 
       return res.status(200).json({
           data: {
