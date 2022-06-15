@@ -45,7 +45,7 @@ pass:'krhsmxawnvhwbiul'
 
 ///////////step 2 let render template  so we want to define we will be using ejs and template rendring engine
 
-//data to put in ejs file like to put username of email body 
+//data to put in ejs file like to put username in email body 
 //,relativepath from where mail is being sent  
 let renderTemplate =(data,relativePath)=>{          
             

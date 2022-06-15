@@ -166,3 +166,38 @@ comment_mailer.newComment called with passing the comment  created with populate
 then we reach at this fucntion from where using transporter object we call sendMail fucntion which
 acutaly send the email to mrjohn from abubarwal account wiht specified html for body 
 -----------------------------------------------------------------------------------------------------------
+redring template in email
+
+
+step 1 :creating new folder name comments inside views/mailers
+
+step 2 : creating new file name newComment.ejs inside above cmments folder 
+
+step 3 : nnow in the comment_mailer.js declareing/defining that we are using template 
+
+step 4 : in the mailer file we decalre the renderTemplate funciton and passon to it  the 
+data as comment and relateivePath for the newcomment.ejs file  and recieve the template in htmlString
+
+let htmlString= nodeMailer.renderTemplate({comment:comment},'/comments/newcomment.ejs') 
+
+
+step 5 : now instead of sending direct html in mail sending htmlString
+nodeMailer.transporter.sendMail({
+from:'mrjohn7861@gmail.com',                              
+to:comment.user.email,                                      
+subject:'newcomment published',  
+
+//instead of this direct html we sent the template 
+html:htmlString
+
+}
+
+
+step 6 now adding content to our newComment.ejs file 
+<div>
+ <p>hi <%=comment.user.name%></p>
+  <br>
+  <br>
+  <p>your comment is published on codeial</p>
+
+</div>
