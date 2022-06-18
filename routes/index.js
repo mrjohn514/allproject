@@ -29,5 +29,9 @@ router.use('/api',require('./api'));
 
 
 
+//requireing likes routes
+router.use('/like',require('./like'));
+
+
 // Exporting router
 module.exports = router;

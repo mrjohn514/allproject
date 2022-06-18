@@ -12,4 +12,14 @@
               <p><%=comment.content%></p>
               <p class="cmtuser">cmnt by:<%=comment.user.name%></p>
 
+              <small>
+               <% if (locals.user){ %>
+                  <a class="toggle-like-button" data-likes="<%= comment.likes.length %>" href="/like/toggle/?id=<%=comment._id%>&type=Comment">
+                          <%= comment.likes.length %> Likes
+                  </a>
+              <% }else{ %>
+                 <p id="alllikes" > <%= comment.likes.length %> Likes</p>
+              <% } %>
+              </small>
+
      </div>

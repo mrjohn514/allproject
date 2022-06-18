@@ -3,7 +3,7 @@ const Post=require('../models/post');
 const Comment=require('../models/comment');
 
 
-
+const Like=require('../models/likes');
 
 
 // module.exports.createpost=function(req,res){
@@ -126,12 +126,17 @@ try{
 
   if(post.user==req.user.id){                   //then this exeuted
   
-    post.remove();
-    
-    
+
+       //delelting the associated likes for post and all of its comments likes too 
+    await Like.deleteMany({likeable: post, onModel: 'Post'});  
+    await Like.deleteMany({id:{$in: post.comments}});
+
+
+    post.remove();  
    let comment= await Comment.deleteMany({post:req.params.id});  //await 2
   
-  
+
+
    if(req.xhr)
    {
     return res.status(200).json({

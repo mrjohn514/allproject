@@ -120,6 +120,23 @@ box-shadow: 0px 0px 5px 4px rgba(222,138,192,1);
 
 }
 
+#like-link{
+    display: inline-block;
+    font-size: 1.2rem;
+}
+#like-count{
+    display: inline-block;
+    font-size: 1.2rem;
+}
+
+#alllikes{
+    font-size: 0.8rem; 
+}
+
+.toggle-like-button{
+    font-size: 0.8rem; 
+}
+
 .postcontent{
     margin-bottom: 25px;
 }

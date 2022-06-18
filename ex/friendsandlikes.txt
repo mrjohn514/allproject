@@ -1,0 +1,430 @@
+how to implement this 
+now here lets say we have collectoins likes and we need to make suere it refernce multiple models
+mongoose provide us freatur dynamic refernces by which we can refer to differnt documents dynamically
+depending which object of like is called of (it is for comments or posts)
+
+
+step 1:creating model/schema for likes 
+const mongoose=require('mongoose');
+
+const likeSchema = new mongoose.Schema({
+//what like belongs to it belong to user we need to keep record which user has made like so 
+//need user
+
+user:{                          
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'User'       
+ },
+
+ //now i need to store two things 
+ //i) the type on which like  has been placed (post or comment)
+ //ii)and object id on which like has been place (id of post or id of coment)
+
+
+ //this define the object  id of liked object   (id of post or comment)
+ likeable:{
+    type:mongoose.Schema.Types.ObjectId,
+    require:true,
+    //we need to tell it is dynamic reference
+    //refpath we are goind to place a path to someother field and that field is goind to
+    // decide on which type of object like is made
+
+     // Instead of a hardcoded model name in `ref`, `refPath` means Mongoose
+    // will look at the `onModel` property to find the right model.
+    refPath:'onModel'       
+},
+
+
+//this field defines type of the liked object since this  is dynamci refernce 
+
+onModel:{
+    type:String,
+    require:true,
+    enum:['Post','Comment']         //values that can be put into this onModel field is either Post or Comment
+}
+},{
+timestamps:true
+
+});
+const Like = mongoose.model('Like',likeSchema);
+module.exports=Like;
+
+
+
+step 2:now do we tell post it is going to have arrya of likes so that i can access all the likes of
+a post like we are able to acces all the comments made on post 
+
+adding likse array in post model
+
+likes:[{
+type:mongoose.Schema.ObjectId,
+ref:"Like"
+
+
+}]
+
+
+
+stpe 3: same addtiion of array of likes for commenst also for same reason above 
+so puting array of likes in comments model
+
+likes:[{
+type:mongoose.Schema.ObjectId,
+ref:"Like"
+
+
+}]
+
+
+
+step 4 :creting like  create/delte controller creating like_contrller file
+
+module.exports.tooglelike= async function(req,res){
+
+console.log("reaches likecontroller")
+
+try {
+    
+    //why iam taking this variable because when i send json data to ajax then there should be something which
+    //tell me like is incremented or delted means (if already like then it shuold get deleted and decr count oflikes)
+    //(if no liked already then like created and count of likes incremented ) 
+  var deleted=false;             
+
+  let likeable;
+
+//now when req reach here first thing i have to find wheaterh likeable object type is post or comment
+//our route looks like this   (like/togglelike?id=abbd&&type=Post)
+
+//this likeable will tell us type it is post or comment for which like is made 
+if(req.query.type=='Post') 
+{
+ likeable= await Post.findById(req.query.id);
+}
+else
+{
+ likeable=await Comment.findById(req.query.id);
+}
+
+
+
+//geting the existing like from Like Collection to check if already exists in collection or not
+let existinglike=await Like.findOne({
+
+likeable:req.query.id,                   //likable field haveing this id in like collction
+onModel:req.query.type,                   //onModel field haveing this type in like collections
+user:req.user._id                        //appended in req object through passport
+})
+
+
+//checking if existeinglike exists or not 
+
+if(existinglike)
+{
+//if already like exists we have to delte the like from collection and so also from likeable(post/comment) like array field
+
+//deleting from array of like of likeable
+likeable.likes.pull(existinglike._id);
+likeable.save();          //saving changes in document
+
+//removing from like collection 
+existinglike.remove();
+
+//also updating delte to true as like is deleted and this true indicates that we have to decrement
+deleted=true;
+
+}
+
+else
+{
+//same like delteing two things have to do if like not exists then create like in like collection and
+//also adding to likavel aray of likes 
+
+let newlike= await Like.create({
+  
+likeable:req.query.id,            //this likeable is field of like collection not above let likeable this let likabel is holdin either post or commeent
+onModel:req.query.type,
+user:req.user._id
+
+})
+
+//adding id of like created   to the likeable(post/comment) array of likes 
+likeable.likes.push(newlike._id);
+likeable.save();
+}
+
+
+//since everything done succesfully returning json data to ajax req made 
+ console.log("enterd in xhr")
+
+if(req.xhr)
+{
+    return res.json(500,{
+        message:"success",
+        data:{
+         deleted:deleted
+        }
+    })
+}
+return res.redirect('/');
+
+} catch (err) {
+    console.log("erron is ",err);
+    return res.json(500,{
+        message:"internal server error"
+    })
+}
+}
+
+
+
+step 5:creating route for controller and mapping it to controller creatin like.js in routes
+adding it in index file 
+
+adding route for like 
+router.get('/toggle',likeController.tooglelike);
+
+also updaitng in index.js of routes for use of like file
+//requireing likes routes
+router.use('/like',require('./like'));
+
+
+
+
+step 6:adding like tags to post in post.ejs
+
+      <% if (locals.user){%>
+    <div>
+       <p id="like-count"><%=post.likes.length%></p>
+      <p id="like-link"><a class="new-like-button" href="/like/toggle/?id=<%=post._id%>&type=Post">like</a></p>
+    </div>
+    
+    <%}else {%>
+
+    <div class="post-like-list">
+       <p id="like-content"><%=post.likes.length%> likes</p>
+      </div>
+<%}%>
+
+
+------------------------------------------------------------------------------------------------------------
+till this code i get the functioallity of likes that i  want if i clikc and like is not made it 
+increased and if liked already then decreased 
+-----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------
+my way of making ajax likes 
+
+step 1 i have added function postlike and call it whenever post is created through ajax
+//////////////////////// creating like
+let Postlike= function(likeLink)       //geting the acnchor tag in post for delte
+{
+console.log("enterd in postLike");
+
+$(likeLink).click(function(e){
+
+e.preventDefault();                   
+
+$.ajax({
+type:'get',
+url: $(likeLink).prop('href'),                
+
+success:function(data){                          
+  console.log("in succes dataa of like")
+  console.log(data);      
+let likecount=$('#like-count');
+  
+if(data.data.deleted==true)
+{
+let n=parseInt(likecount.text());
+if(n==0)
+{
+  let n=parseInt(likecount.text());
+  n++;
+  likecount.text(n);
+}
+else
+{
+  n--;
+likecount.text(n);
+}
+}
+else
+{
+  let n=parseInt(likecount.text());
+  n++;
+  likecount.text(n);
+}
+},
+error:function(error){
+console.log(error.responseText);
+}
+})
+})
+
+}
+
+
+and calling this fucntion whilie newpost is created calling it before deletpost of ajax
+it will give me fucntionallity of like for newpost created using ajax 
+
+
+
+now i created post_like.js file in js folder and for all the likes present in home page 
+i want to add ajax fucntionalillty 
+
+so i take array of likes using 
+let alllikes=$('.new-like-button');
+
+
+called a fucntion postlike in for loop till alllikes.length 
+but iam facing issue when i click on any like of home screen only like of first post changed 
+as i put like iside p of class likecount and iam geting aray of this but only applying to first likcount 
+because iam accessing element without $'
+------------------------------------------------------------------------------------------------------------
+
+step 1: see i want to add like functionality of ajax to both  post and comment when a new post/cmnt is created 
+so either i can write fucntions in both of their js files and call whernver a post/comment is created 
+
+///instead of that i created a mylike.js file in which i created a class
+class ToggleLike{
+    // constructor is used to initialize the instance of the class whenever a new instance is created
+    constructor(likeLink){
+        this.createLike(likeLink);       //funciton createLink called using instace
+    }
+
+
+    createLike(likeLink){
+        console.log("script loaded")
+    console.log("enterd here in createlikelink")
+      console.log(likeLink);
+
+        $(likeLink).click(function(e){
+            e.preventDefault();
+
+        
+$.ajax({
+    type:'get',
+    url: $(likeLink).prop('href'),                
+    
+    success:function(data){                          
+      console.log("in succes dataa of like")
+      console.log(data); 
+
+      let likesCount = parseInt($(likeLink).attr('data-likes'));  //getting value of attribute set by me in a tag
+      console.log(likesCount);
+      if (data.data.deleted == true){            //tellin if like is clicked if already or not 
+          likesCount -= 1;
+          
+      }else{                          
+          likesCount += 1;
+      }
+
+
+      $(likeLink).attr('data-likes', likesCount);          //updating valu of attribut wit lates value
+      $(likeLink).html(`${likesCount} Likes`);      //changing a tag html with lates updatge
+    
+    
+    },
+    error:function(error){
+    console.log(error.responseText);
+    }    
+    })
+        });
+    }
+}
+
+
+step 2 : i need to add this file to homepage.ejs 
+<script src="/js/mylike.js"></script>
+
+
+step 3: i need to update post ejs annd add like html
+basically a tag 
+    <div>
+      <% if (locals.user){ %>  
+        <a class="toggle-like-button" data-likes="<%= post.likes.length %>" href="/like/toggle/?id=<%=post._id%>&type=Post">
+                <%= post.likes.length %> Likes
+        </a>
+    <% }else{ %>
+       <p id="alllikes" > <%= post.likes.length %> Likes</p>
+    <% } %>
+
+  </div>
+
+  step 4 similar for coment.ejs file 
+    <small>
+               <% if (locals.user){ %>
+                  <a class="toggle-like-button" data-likes="<%= comment.likes.length %>" href="/like/toggle/?id=<%=comment._id%>&type=Comment">
+                          <%= comment.likes.length %> Likes
+                  </a>
+              <% }else{ %>
+                 <p id="alllikes" > <%= comment.likes.length %> Likes</p>
+              <% } %>
+              </small>
+
+
+
+step 5 updating ajx dom html of post and adding this like a tage there also in homepost.js file 
+      <div>
+      <a class="toggle-like-button" data-likes="0" href="/like/toggle/?id=${post._id}&type=Post">
+      0 Likes
+     </a>
+    </div>
+
+    </div>
+
+
+
+    step 6 similar adding same for comments 
+      <small>
+               <a class="toggle-like-button" data-likes="${ comment.likes.length}" href="/like/toggle/?id=${comment._id}&type=Comment">
+                       ${ comment.likes.length } Likes
+               </a>
+           </small>
+
+
+
+    step 7: creating object of class ToggleLike whenever post is created using ajax
+    inside home_post.js file 
+    //creating instance of like class
+    new ToggleLike($(' .toggle-like-button', newPost));
+    
+
+
+    step 8: similar creating object of ToggleLike whenever commeent is created using ajax
+     new ToggleLike($(' .toggle-like-button', newComment));
+
+
+     till here you get fucntionality of likes in post/comments u created using ajax
+
+     step 9: now i want like fucntionalillty to all likes or comments present in homescreen 
+     so fetch the aray of likes usin dom jquery 
+     added for loop and created object of class ToggleLike in loop for every a tag
+     <script>
+    $('.toggle-like-button').each(function(){
+        let self = this;
+         console.log("iam in script");
+         new ToggleLike(self);
+    });
+</script>
+
+
+
+step 10: whenever iam deling post i also have to delte the likes associated with that post from 
+like collection 
+so when deleting like also delting the like associated with that post and like associated with 
+the comments of that post from like collection 
+
+       //delelting the associated likes for post and all of its comments likes too 
+    await Like.deleteMany({likeable: post, onModel: 'Post'});  
+    await Like.deleteMany({id:{$in: post.comments}});
+
+
+step 11 : whenever delelting the comment deling the like associated with that comment form teh 
+like collection
+
+     await Like.deleteMany({likeable: comment._id, onModel: 'Comment'});

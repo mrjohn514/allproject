@@ -6,6 +6,9 @@ const Post=require('../models/post');
 
 const commentMailer=require('../mailers/comment_mailer');
 
+const Like=require('../models/likes');
+
+
 // module.exports.createcomment=function(req,res){
 // //now to create a comment over post we need to find weateher that post exists or not for example
 // //anyone can change the value of post id in inspect and we will get error 
@@ -146,6 +149,8 @@ module.exports.deletecomment= async function(req,res){
       comment.remove();
      await Post.findByIdAndUpdate(postid,{ $pull:{comments:req.params.id }});   //await 2 when responce is not need like here iam receiving post but no need so direclty await
   
+       //deleting the like document associated with deleted comment from the like collection 
+     await Like.deleteMany({likeable: comment._id, onModel: 'Comment'});
 
       // send the comment id which was deleted back to the views
       if (req.xhr){

@@ -38,6 +38,14 @@ $('#post-container').prepend(newPost);
  // call the create comment class
  let obj=new PostComments(data.data.post._id);
 
+//callinglike funtion
+//  Postlike($(' #new-like-button'),newPost);
+
+
+//creating instance of like class
+new ToggleLike($(' .toggle-like-button', newPost));
+  
+
   console.log("object is",obj);
 
  //calling deltepost passing the anchor tag  to  delte post function 
@@ -84,14 +92,14 @@ let newPostDom= function(post)
  //backtick is feature where i can interpolae strings exampole var x=10 console,log(`ar$(x)`) ar10   
 return $(`
 <div class="card" id="post-${post._id}">        
-    <div class="postcontent">
+       <div class="postcontent">
   
         <p><a class="delete-post-button" href="/post/deletepost/${post._id}">x</a></p>
 
         <p>${post.content}</p>
         <p class="uname">postBy:${post.user.name}</p>   
-    </div>
-      <div class="commentform">
+       </div>
+       <div class="commentform">
 
 
         <form action="/comment/createcomment" id="post-${ post._id }-comments-form" method="post">
@@ -110,6 +118,12 @@ return $(`
 
 
       </div>
+
+      <div>
+      <a class="toggle-like-button" data-likes="0" href="/like/toggle/?id=${post._id}&type=Post">
+      0 Likes
+  </a>
+    </div>
 
     </div>
 
@@ -140,7 +154,7 @@ type:'get',
 url: $(deleteLink).prop('href'),                //geting the href of anchro tag using prop fnction
 
 success:function(data){                            //here data will have post_id sent from controller
-
+  console.log("in delte post")
   console.log(data);
  $(`#post-${data.data.post_id}`).remove();          //selecting the post div card using id selector in dom and removing the post  
  
@@ -174,6 +188,77 @@ console.log(error.responseText);
 
 
 }
+
+
+
+// //////////////////////// creating like
+// let Postlike= function(likeLink)       //geting the acnchor tag in post for delte
+// {
+// console.log("enterd in postLike");
+
+// $(likeLink).click(function(e){
+
+// e.preventDefault();                   
+
+// $.ajax({
+// type:'get',
+// url: $(likeLink).prop('href'),                
+
+// success:function(data){                          
+//   console.log("in succes dataa of like")
+//   console.log(data);      
+// let likecount=$('#like-count');
+  
+// if(data.data.deleted==true)
+// {
+// let n=parseInt(likecount.text());
+// if(n==0)
+// {
+//   let n=parseInt(likecount.text());
+//   n++;
+//   likecount.text(n);
+// }
+// else
+// {
+//   n--;
+// likecount.text(n);
+// }
+
+
+// }
+// else
+// {
+//   let n=parseInt(likecount.text());
+//   n++;
+//   likecount.text(n);
+// }
+
+
+
+// },
+// error:function(error){
+// console.log(error.responseText);
+
+
+// }
+
+
+
+// })
+
+
+// })
+
+
+
+// }
+
+
+
+
+
+
+
 
 
 

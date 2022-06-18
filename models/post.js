@@ -22,7 +22,14 @@ comments:[
     ref: 'Comment' 
     }
 
-]
+],
+
+likes:[{                             //added likes arrayy have same reason like for comment array above query makin faster 
+type:mongoose.Schema.ObjectId,
+ref:"Like"
+
+
+}]
 
 }
 ,

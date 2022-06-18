@@ -44,7 +44,13 @@
 
                         
                         let newComment = pSelf.newCommentDom(data.data.comment);   //fucntion newcommentDom called usning instance
+            
                         $(`#post-comments-${postId}`).prepend(newComment);
+
+                     
+                        new ToggleLike($(' .toggle-like-button', newComment));
+
+
                         pSelf.deleteComment($(' .delete-comment-button',newComment));  //calling delete and passing anchor elemtn to fucntiion so we preentdefa
                         //defautl behavioiur make ajax req recive data  which conatian comment id which is used to select  the conatiner having comment 
                         //as the contaienr have id in whcih comment id used so to select that elemen we need to 
@@ -86,6 +92,12 @@
 
             <p class="cmtuser">cmnt by:${comment.user.name}</p>
         
+
+            <small>
+               <a class="toggle-like-button" data-likes="${ comment.likes.length}" href="/like/toggle/?id=${comment._id}&type=Comment">
+                       ${ comment.likes.length } Likes
+               </a>
+           </small>
              </div>
 
             

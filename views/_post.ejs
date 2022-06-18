@@ -44,7 +44,19 @@
 
 
       </div>
+      
+      <div>
+      <% if (locals.user){ %>  
+        <a class="toggle-like-button" data-likes="<%= post.likes.length %>" href="/like/toggle/?id=<%=post._id%>&type=Post">
+                <%= post.likes.length %> Likes
+        </a>
+    <% }else{ %>
+       <p id="alllikes" > <%= post.likes.length %> Likes</p>
+    <% } %>
+
+  </div>
 
     </div>
+
 
   

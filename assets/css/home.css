@@ -86,6 +86,20 @@ header {
     font-size: 1.8rem;
     color: white; }
 
+#like-link {
+  display: inline-block;
+  font-size: 1.2rem; }
+
+#like-count {
+  display: inline-block;
+  font-size: 1.2rem; }
+
+#alllikes {
+  font-size: 0.8rem; }
+
+.toggle-like-button {
+  font-size: 0.8rem; }
+
 .postcontent {
   margin-bottom: 25px; }
 

@@ -40,3 +40,11 @@
 
 <script src="/js/home_post.js"></script>
 <script src="/js/post_comment.js"></script>
+<script src="/js/mylike.js"></script>
+<script>
+    $('.toggle-like-button').each(function(){
+        let self = this;
+         console.log("iam in script");
+         new ToggleLike(self);
+    });
+</script>
