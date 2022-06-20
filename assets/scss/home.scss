@@ -60,8 +60,17 @@ box-sizing: border-box;
     box-shadow: 2px 2px 8px 7px rgba(203,193,232,1);
     margin-top: 15px;
     margin-right: 13px;
+   display: flex;
+   flex-direction: column;
+  
+   .friends{
+    border: 1px solid black;
+   }
 
-   
+   .users{
+    border: 1px solid green;
+   }
+
 
 }
 
@@ -156,4 +165,10 @@ box-shadow: 0px 0px 5px 4px rgba(222,138,192,1);
         font-size: 1rem;
         margin: 0;
     }
+}
+
+
+#new-friend-btn
+{
+display:none;
 }

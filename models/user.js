@@ -29,7 +29,16 @@ const userSchema = new mongoose.Schema({
    avatar:{                 //field to store file path in db
    type:String,
 
-   }
+   },
+
+   //adding array of friend to easy acces who are friends of user
+   friends:[
+    {
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'Friend' 
+    }
+
+]
 
 
 }, {

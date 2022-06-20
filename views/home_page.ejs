@@ -14,13 +14,57 @@
  
 
     <div class="right">
-        <h2>Friends</h2>
-        <% for (u of all_users) {%>
-        
-        <!-- //link to the profile of user -->
-        <div class="chip"> <p><span><i class="fas fa-user"></i></span><a href="/user/userprofile/<%=u.id%>" class="userfriend"><%=u.name%></a> </p> </div> 
-        
-        <%}%>
+      
+        <!-- is user is loged in  -->
+       <%if (locals.user){%>
+        <div id="friends">
+            <h2>friends</h2>
+            <% for (f of cuser.friends) {%>
+            
+                <!-- //link to the profile of user -->
+                   <div class="chip">
+
+                    <!-- now login user is in local and and current user is send from home controller cuser
+                        with populated freind array field 
+                    iterating over all the friend documents  [{touser:{}},{from_user{}},{touser:{},from_user{} }]
+                    and we know now the every user either can recived req and or sent req
+                    so wherever loggedinuser is not present either in touser or fromuser then that filed is containign 
+                    friend of this logeedinuser 
+
+                    basicllay in aray of freinds this logedin user must be present in one of the field 
+                    that is eitehr to_user (receive req) so freind is present in from_user
+                    or  from_user(sent req)  so freind is present in to_user
+                    -->
+                    <% if  (locals.user.id != f.to_user.id ) { %>
+                     <p><img src="<%=f.to_user.avatar%>" alt="no image"  width="40" height="40"><%=f.to_user.name%> </p>
+
+                    <%}%>
+
+                    <% if  (locals.user.id != f.from_user.id ) { %>
+                        <p><img src="<%=f.from_user.avatar%>" alt="no image"  width="40" height="40"><%=f.from_user.name%> </p>
+   
+                       <%}%>
+
+
+
+                     <% if  (locals.user && locals.user.id == cuser.id ) { %>
+                        <p><a href="/friend/deletefriend/<%=f._id%>"><i class="fas fa-trash"></i></a></p>  
+                        <%}%> 
+                    </div> 
+                
+                <%}%>
+        </div>
+
+      <%}%>
+        <div class="users">
+            <h2>Users</h2>
+            <% for (u of all_users) {%>
+            
+            <!-- //link to the profile of user -->
+            <div class="chip"> <p><span><i class="fas fa-user"></i></span><a href="/user/userprofile/<%=u.id%>" class="userfriend"><%=u.name%></a> </p> </div> 
+            
+            <%}%>
+        </div>
 
     </div>
 
@@ -37,6 +81,10 @@
             <%}%>
             </div>
     </section>
+
+
+    <div id="new-friend-btn">
+    </div>
 
 <script src="/js/home_post.js"></script>
 <script src="/js/post_comment.js"></script>

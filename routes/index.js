@@ -33,5 +33,8 @@ router.use('/api',require('./api'));
 router.use('/like',require('./like'));
 
 
+//requiring friend routes
+router.use('/friend',require('./friend'))
+
 // Exporting router
 module.exports = router;

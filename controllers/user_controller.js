@@ -1,6 +1,8 @@
 //we need our model/collection so that we can create user into it so requring our collection/model
 const User=require('../models/user')
 
+const Friend=require('../models/friend')
+
 const fs=require('fs');
 
 const path=require('path');
@@ -15,20 +17,73 @@ const path=require('path');
 //     })
 // }
 
-module.exports.profile=function(req,res)
+module.exports.profile = (req, res) =>
 {
-    console.log(req.session);
-    console.log(req.user);
- /// this is only works for links we created inside friends and not when u click mrjohn aside of signout at top becaues route changed 
-    User.findById(req.params.id,function(err,user){
-        return res.render('user_profile',{
-            title:'profile',
-            //now here i cant name the key user as user named key already in locals
-           profile_user:user 
+    User.findById(req.params.id, function (error, user)
+    {
+        if (error)
+        {
+            console.log('error in finding the user profile!');
+            return;
+        }
+       //to display add friend and remove freind on profile acc to this var
+        let hasfriend = false;
 
+     //why not like this finding freind see let john send friend req to abubarwal 
+     //then to_user:abubarwal  | from_user: john
+     //if john login and go to abubarwal profile page this hasfriend will works because we will able to 
+     //find frind with {to_user:abubarwal  | from_user: john} and so add friend to removfriend change
+    //now if u sign in using abubarwal then  here hasfriend will always false becaouese 
+    //qeury  { to_user:abubarwal  | from_user: john} will find nothing because here 
+    //  here we have to find  {from_user:abubarwal  |  to_user:john}    {loggedinuser:   |  profilepageuser   }
+
+
+
+    //  Friend.findOne({
+    //     to_user:req.params.id,
+    //     from_user:req.user.id
+            
+    //     },function(err,friend){
+    //     if(err){console.log("error",err);return}
+         
+    //     console.log("enterd in friend")
+    //      if(friend)
+    //      hasfriend=true;
+
+
+    //     })
+
+
+
+
+        Friend.findOne({
+            $or: [{ from_user: req.user._id, to_user: req.params.id },
+            { from_user: req.params.id, to_user: req.user._id }]
+        }, function (error, friend)
+        {
+            if (error)
+            {
+                console.log('There was an error in finding the friendship', error);
+                return;
+            }
+            if (friend)
+            {
+                hasfriend = true;
+            }
+            /* console.log(req.user);
+            console.log(req.user._id, '********', req.params.id, '*******') */
+            var options =
+            {
+                title: "profile page",
+                profile_user: user,/* it is the user whose profile i am currently browsing */
+                hasfriend: hasfriend
+            }
+            return res.render('user_profile', options);
         })
 
-    })
+
+    });
+
 }
 
 

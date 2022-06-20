@@ -3,7 +3,7 @@
     <div class="content"> 
     
          <!-- as i have added userin local and user also have avatar field which will have image path -->
-    <img src="<%=user.avatar%>" alt="no image"  width="100" height="100">
+    <img src="<%=profile_user.avatar%>" alt="no image"  width="80" height="80">
 
      <!-- here we are not checking if(locals.user) becaues it is sure user cant view his profile page
      without login as we have added in passport.checkaAuthenticaiton chek so we know if user is in profile
@@ -28,7 +28,24 @@
 
         <p><%=profile_user.name%></p>
         <p><%=profile_user.email%></p>
+
+        
+        <!-- getting this propery hasfirend true or false from userprofile controler and if hasfriend true 
+         show remvoe friend text in  link
+         else
+         shoeing add friend text in link
+        -->
+         <%if(hasfriend){%>
+            <a type="button" id="new-friend-link" href="/friend/createfriend/<%=profile_user.id%>" class="btn btn-danger text-white"   > remove friend</a>
+         
+        <%}else{%>
+            <a id="new-friend-link" href="/friend/createfriend/<%=profile_user.id%>"  id="add-friend" class="btn btn-primary text-white"    >add friend</a>    
+        <%}%>
+
+
+
         <%}%>
 
     </div>
+    <script src="/js/friend.js"></script>
 </section>

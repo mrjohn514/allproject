@@ -96,19 +96,38 @@ const User= require('../models/user');
   }
   });
   //now once this post part get exexutedthen this user part get exexuted  
-  
-  
+
   // similar any success responce will be stored in let user 
   let users= await User.find({});                                                  //await 2  then thiss get executed
   
   //now once this user get executed then this redner part will executed
   
-  
-  // and the stored post and user responce will sent to the server 
+
+  //if user is signed in then populate the current signed user friends array with friendhsip 
+  //and send it to viws for displaying 
+  if(req.user){
+
+ let cuser= await User.findById(req.user.id).populate({
+  path:'friends',
+  populate:{
+    path:'to_user from_user'
+  }
+ });
+    
+  console.log(cuser);
+
+  return res.render('home_page',{                                              //then this get executed
+    title:'home', 
+   posts:posts,
+   all_users:users,
+   cuser:cuser                         
+   });
+  }
+  // if user is not logged in dont show freinds so dont pass cuser
     return res.render('home_page',{                                              //then this get executed
            title:'home', 
           posts:posts,
-          all_users:users                          
+          all_users:users,                         
           });
   
   

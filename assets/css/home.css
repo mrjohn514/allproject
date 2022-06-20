@@ -45,7 +45,13 @@ header {
   height: 650px;
   box-shadow: 2px 2px 8px 7px #cbc1e8;
   margin-top: 15px;
-  margin-right: 13px; }
+  margin-right: 13px;
+  display: flex;
+  flex-direction: column; }
+  .right .friends {
+    border: 1px solid black; }
+  .right .users {
+    border: 1px solid green; }
 
 .chip {
   margin: 4px 0px;
@@ -110,3 +116,6 @@ header {
 .post-comments-list p {
   font-size: 1rem;
   margin: 0; }
+
+#new-friend-btn {
+  display: none; }

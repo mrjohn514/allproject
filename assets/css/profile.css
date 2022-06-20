@@ -41,3 +41,10 @@ header {
   background: linear-gradient(104deg, #1b2467 11%, #cac3e0 86%, #2d359e 99%); }
   .footercontainer a {
     font-size: 1.5rem; }
+
+#add-friend {
+  background-color: #7952b3;
+  border-color: #7952b3; }
+  #add-friend:hover {
+    background-color: #6339a1;
+    border-color: #6339a1; }
