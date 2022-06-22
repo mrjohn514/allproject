@@ -37,6 +37,20 @@ const flash= require('connect-flash');
 const customMware=require('./config/middleware');
 
 
+
+
+//telling to use socket file 
+const http = require('http');     //rquirng http module
+const chatServer = http.createServer(app);  //passing our expres app toServer function
+
+ //requinrg chatsocket.js file and passing this chatserver to fucntion in chatsocket.js file
+const chatSockets=require('./config/chat_socket').chatSockets(chatServer)  
+
+
+chatServer.listen(5000);
+console.log("chatserver is listening on port 5000")
+
+
              /////using sasss in appp 
 app.use(sassMiddleware({
     src: './assets/scss',                   //from whre do i pick up the scss files to convert into css

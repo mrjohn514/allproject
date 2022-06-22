@@ -27,6 +27,7 @@
     "passport-google-oauth": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "sails": "^0.12.14"
+    "sails": "^0.12.14",
+    "socket.io": "^4.5.1"
   }
 }

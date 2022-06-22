@@ -1,0 +1,324 @@
+let a user1              server s                             user 2 
+
+now there is a  observer and subscribeer software desing pattern wherein there is an observer and many subscribers
+if there is user1 and user2 they have subscribed to this server s;
+this server is watching over theese two users and if anyone does smthing or send smthing to server then server
+pusheses all the updates to all the otheres users connected
+
+
+server is a observer
+user is a subscribeer 
+
+if one pushes and observer either can broadcast to other or unicast
+
+
+-----------------------------------------------------------------------------------------------------------
+without websocket how can we develop a chat enigne 
+
+let a user1  
+let  user2 
+server 
+db  (having table storing messages )
+
+if user1 sends hello usery is constantly repetdly  asking server is there a new messafe in database 
+which is directed towards me if there is then show it to me 
+at every second orwhatever tiem duration iam set both of these has any ohter user send messafe to me
+now see it is too many request to servver first of all it is called polling u repetdly ping the server 
+and ask is there a new masg if there msg then give it  to me
+
+
+-->this process is putting too much load on server as server is repetdly sending empty response that dude
+there is no new msg  
+
+
+----------------------------------------------------------------------------------------------------------
+--->have you ever come accross req time out wheere your server says this req is taking too long so iam 
+letting it go 
+there is something called long polling wherein user1 sends req that whenever another message in tells me 
+and server holds this req 
+similarly user2 sends the same req and server is holding his req also 
+
+
+and now if third user3 send message and this msg is directed towards user1 and user2 then  both of 
+them will get response from server 
+then  after getting response again user1 ans user2 sends again the long holding req  to server 
+
+
+this again would occupy multiple server resourses foreg: u have multiple threaded system with maximum of 4 threads 
+running then all your threads will remain open and task which will come over later on that will queued on 
+and they will never executed because your req are being held back and response is not going 
+
+
+
+
+-----------------------------------------------------------------------------------------------------------
+to solve our problems sockets came into role
+
+what are web sockets 
+right now our communication is one way we req and server responds so it is one way in  trems of making req 
+only i can ask or tell smthing to server and it give respose
+
+so websocket here term sockets means two way communication channel
+between user1,user2 and server a two way communication channel is established  (so on with all users present)
+ans this is not running on the normal http thing this is following its own differnt protocol
+
+
+-->so when user1 emmit msg observer recive the msg then it emits to all others users 
+(if msg is sent too all and if it is to sepecific user then to that user)
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------
+starting chat enigne
+
+step 1: installing sockets 
+npm install socket.io
+
+step 2:configuring socket.io making socket.js in config folder
+
+step 3 :telling index.js we are using  chat_socket.js
+with socket.io in express we have to do much more than this 
+
+const http = require('http');     //rquirng http module
+const chatserver = http.Server(app);  //passing our expres app toServer function
+const chatSockets=require('./config/chat_socket')(chatserver)   //passing this chatserver to chatsocket.js file
+
+chatServer.listen(5000);   //telling port to this chatServer as we canto give 8000 as our node is running there
+console.log("chatserver is listening on port 5000")
+
+
+step 4: one more thing we need to we need this socket.io library at server side and also at 
+frontend because socket will comunicate with socket the client(user) sends the request to establsih a 
+socket connection with server so that they  both can communicate two ways 
+
+-->creating chat_engine.js in js folder to get socketio at frontend part 
+and now we have to add this file and socket.io library (cdn of socket.io )in homepage.ejs
+
+step 5: adding the js file and cdn to homepage.ejs
+
+<!-- cdn of socket.io basically getting library of socket.io at frontend -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+<!-- this chat_engine.js is the file communicating from the client side (user on the brower) -->
+<!-- and socket.js in config folder wil communicate from server side  bascially the observer -->
+<script src="/js/chat_engine.js"></script>  
+
+
+step 6: create the connection between user and server thatis observer and subscriber  
+user always initiate the connection and observer detects it and acknolege conection is established
+
+
+beginin from the frontend
+
+
+step 7:creating class in chatengine.js file to get the frontend functionality
+
+class ChatEngine{
+
+//take two things id of the chatbox basically our chatcontainer in homepage
+// and email id of user (who is initiating connection)    
+constructor(chatboxid,userEmail){
+this.chatBox=$(`#${chatboxid}`);
+this.userEmail=userEmail
+
+//then we need to initiate a connection 
+//iam running socket server on port 5000
+//now io is a global variable available as soon we added cdn of socket.io
+this.socket=io.connect('http://localhost:5000')
+
+///calling the function only if there is user email
+if(this.userEmail){
+this.connectionHandler();
+}
+}
+//creating connection handler (basically function)
+//this conectionhandler will have the to and fro interaction between observer(server) and subscrier(user)
+connectionHandler(){
+
+//ans event on socket which take place is connection
+//when connect event occurs in socket calling a callback funtion
+this.socket.on('connect',function(){
+
+console.log("connection established using sockets..!")
+});
+}
+}
+
+
+step 8: creating new object of this class on homepage.ejs  and creating this object  will send a 
+request for connection 
+
+<!-- creating a object of chatengine class only if user is signin we dont want random user to send msg -->
+<%if(locals.user){%>
+<script>
+ //creating new object passing the chatbox id and user email   
+new chatEngine('chatcontainer','<%=locals.user.email%>');
+</script>
+<%}%>
+
+upto here frontend part(subscribeer part ) is done 
+------------------------------------------------------------------------------------------------------
+
+
+step 9:creating server side sosket  (observer) in chat_socket.js creating function chatSockets
+
+module.exports.chatSockets= function(socketServer)   //receving the chatserver made form index.js file
+{
+//io again established this io handling the connections
+//requiring soket.io module and also passing our made soketserver to this module    
+var io = require('socket.io')(socketServer, {
+  cors: {
+    origin: '*',
+  }
+});
+
+//io has allthe sockets and this event is called connection over here and connect over client side
+//but both the events are same
+
+//so when object of class chatEngine made there is line this.socket=io.connect('http://localhost:5000')
+//which says go and connect basically io.connect fires an event called connection
+io.sockets.on('connection',function(socket){
+
+    //socket is an object with lot of properties of user which is sending req
+    console.log("new connection recived",socket.id)
+})
+}
+
+
+
+
+-----------------------------------------------------------------------------------------------------------
+                      whats happening till now
+                      
+-->for now  we are sendiing the connect req 
+this.socket=io.connect('http://localhost:5000')
+
+-->and calling the connectionHandler function  which detects if the connection has been completed 
+if(this.userEmail){
+this.connectionHandler();
+}
+
+connectionHandler(){
+this.socket.on('connect',function(){
+console.log("connection established using sockets..!")
+});
+
+
+-->how does this happend once the connection established in server side then io.sockets.on('connection',function(socket){
+}) sends back the acknowlege
+to above conectionhandler socket.on by emmiting an connect event automatically
+
+-------------------------------------------------------------------------------------------------------
+
+
+
+
+step 10 its time to join chat room so whenever two or more user are chatting with each other 
+we create a virtual enviromnet called chatroom
+
+lets think in this way there is array of userid(email) for perticular chatbox like who all are chatting 
+at that moment witheach other 
+
+step 1:creaing chatroom and firing event  at client side
+
+//so this event is emited and it wil be recived at chat sockets
+//self.socket.emit('event name can be anyting but it has to coresopnds at server side',data)
+self.socket.emit('join_room',{
+user_email:self.userEmail,          //data 
+chatroom:'codeial'                   //chatroom name
+
+
+})
+
+
+step 2: detecting this chatrom event at server side using on 
+
+//detecting the sent event from client side here 
+//.on is similar like eventlistenrs which detect events send by client
+socket.on('join_room',function(data){
+console.log("joining request recived",data);
+
+})   
+
+
+step 3:further on when joiniing req has been recieved i just want that socket to be joined to that room
+socket.join(data.chatroom);
+
+step 4:now firing event from server side to tell all the users in cahtroom that i(user) had joined the chatroom
+so emit 
+io.in(data.chatroom).emit('user_joined',data);
+
+
+step 5: receving this  user_joined event at client side using on
+self.socket.on('user_joined',function(data){
+    console.log("userjoined",data);
+})
+
+
+step 6:adding event listener to send button of chatbox
+//adding event listern to send button 
+$('#send-message').click(function(){
+
+    let msg=$('#chatmsg').val();
+
+    if(msg!='')
+    {
+     //if messagenot empty emmiting an event sendmessage    
+    self.socket.emit('send_message',{
+    user_name:self.userName,
+   message:msg,
+   user_email:self.userEmail,
+   chatroom:'codeial'
+
+    });    
+    }
+})
+
+
+step 7://detect the sent message from client side (send_message event) and broadcasting to everyone in chatroom
+by emiting event
+socket.on('send_message',function(data){
+
+//broadcating to every one in chat room
+ io.in(data.chatroom).emit('receive_message',data); 
+
+})
+
+
+step 8:detecting the receive_message mesageevent from server side at client side using on
+self.socket.on('receive_message',function(data){
+console.log('recived message',data.message);
+console.log('recieved message',data.user_name);
+
+-------------------------------------------------------------------------------------------------------
+                                          dom manipulation
+//creating new dom 
+let newMessage=$('<li>');
+
+let messagetype='other-message';
+
+//now if user1 sends message and recive_message fired with data now 
+//if the recive_message emiting user ==user sending message
+//basically user1 is reciving his own message as it is broadcasting at server side it is recvied by sent user also 
+//so to avoid this we are using this messagetype
+if(data.user_email ==self.userEmail)
+{
+    console.log("enreting")
+messagetype='self-message';
+}
+
+let text= data.user_name +':'+ data.message;
+
+// //appending html to li created 
+newMessage.html(text);
+
+//now adding class of othermessage or selfmessage  which is set in messagetype
+newMessage.addClass(messagetype);
+
+//finally appending this newmmesage created to ul
+$('#messages').append(newMessage);
+-----------------------------------------------------------------------------------------------------
+
+
+})

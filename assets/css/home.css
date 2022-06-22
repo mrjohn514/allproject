@@ -2,15 +2,12 @@ body {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva;
   margin: 0; }
 
-h1, p {
+.leftbar h1, .leftbar p {
   margin: 0;
   font-size: 1.8rem;
   color: white; }
 
-a {
-  text-decoration: none;
-  font-size: 1.3rem;
-  margin: 0px 5px;
+.content h1 {
   color: white; }
 
 header {
@@ -48,10 +45,10 @@ header {
   margin-right: 13px;
   display: flex;
   flex-direction: column; }
-  .right .friends {
-    border: 1px solid black; }
-  .right .users {
-    border: 1px solid green; }
+  .right .chip img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px; }
 
 .chip {
   margin: 4px 0px;
@@ -77,7 +74,7 @@ header {
   justify-content: space-around;
   align-content: stretch; }
 
-.card {
+.postcard {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -88,7 +85,7 @@ header {
   box-shadow: 0px 0px 5px 4px #de8ac0;
   border-radius: 10px;
   background: linear-gradient(90deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%); }
-  .card p {
+  .postcard p {
     font-size: 1.8rem;
     color: white; }
 

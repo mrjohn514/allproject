@@ -3,19 +3,29 @@ body{
     margin: 0;
 }
 
-
+  .leftbar{
 h1,p{
     margin: 0;
     font-size: 1.8rem;
     color: rgb(255, 255, 255);
 }
+  }
 
-a{
-    text-decoration: none;
-    font-size: 1.3rem;
-    margin: 0px 5px;
-    color: white;
+.content{
+    h1{
+        color: white;
+    }
 }
+
+
+
+
+// a{
+//     text-decoration: none;
+//     font-size: 1.3rem;
+//     margin: 0px 5px;
+//     color: white;
+// }
 
 header{
     position: sticky;
@@ -63,12 +73,12 @@ box-sizing: border-box;
    display: flex;
    flex-direction: column;
   
-   .friends{
-    border: 1px solid black;
-   }
-
-   .users{
-    border: 1px solid green;
+   .chip{
+    img{
+     border-radius: 50%;
+     width:40px;
+     height: 40px;
+    }
    }
 
 
@@ -110,7 +120,7 @@ box-sizing: border-box;
 }
 
 
-.card{
+.postcard{
 
     display: flex;
     flex-direction: column;

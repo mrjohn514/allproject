@@ -91,7 +91,7 @@ let newPostDom= function(post)
 
  //backtick is feature where i can interpolae strings exampole var x=10 console,log(`ar$(x)`) ar10   
 return $(`
-<div class="card" id="post-${post._id}">        
+<div class="postcard" id="post-${post._id}">        
        <div class="postcontent">
   
         <p><a class="delete-post-button" href="/post/deletepost/${post._id}">x</a></p>

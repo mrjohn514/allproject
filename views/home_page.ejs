@@ -36,12 +36,12 @@
                     or  from_user(sent req)  so freind is present in to_user
                     -->
                     <% if  (locals.user.id != f.to_user.id ) { %>
-                     <p><img src="<%=f.to_user.avatar%>" alt="no image"  width="40" height="40"><%=f.to_user.name%> </p>
+                     <p><img src="<%=f.to_user.avatar%>" alt="no image" ><%=f.to_user.name%> </p>
 
                     <%}%>
 
                     <% if  (locals.user.id != f.from_user.id ) { %>
-                        <p><img src="<%=f.from_user.avatar%>" alt="no image"  width="40" height="40"><%=f.from_user.name%> </p>
+                        <p><img src="<%=f.from_user.avatar%>" alt="no image"><%=f.from_user.name%> </p>
    
                        <%}%>
 
@@ -82,9 +82,10 @@
             </div>
     </section>
 
+    <%if(locals.user){%>
+    <%- include('chatengine');%>
+    <%}%>
 
-    <div id="new-friend-btn">
-    </div>
 
 <script src="/js/home_post.js"></script>
 <script src="/js/post_comment.js"></script>
@@ -96,3 +97,18 @@
          new ToggleLike(self);
     });
 </script>
+
+<!-- cdn of socket.io basically getting library of socket.io at frontend -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+<!-- this chat_engine.js is the file communicating from the client side (user on the brower) -->
+<!-- and socket.js in config folder wil communicate from server side  bascially the observer -->
+<script src="/js/chat_engine.js"></script>  
+
+
+<!-- creating a object of chatengine class only if user is signin we dont want random user to send msg -->
+<%if(locals.user){%>
+<script>
+ //creating new object passing the chatbox id and user email   
+new chatEngine('chatcontainer','<%=locals.user.email%>','<%=locals.user.name%>');
+</script>
+<%}%>
