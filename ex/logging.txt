@@ -1,0 +1,63 @@
+logging a very important aspect of development and super usefull for debugging now whenever we are
+in development mode we are able to see the logs in terminal and are able to find the error ocurring 
+
+->but when we are in produciton mode our server is runing in background as demon procees
+demon procees :(a  process bacially which is not visible as runing procees)
+
+->for that what we do is we save log in a file and how to  save is by using library (middleware) which
+will put logs in file but also that file can grows huge so to prevent it from growing either we can keep 
+backup of weekly logs or bacially we can delte the old logs 
+
+
+-->we will use library called morgan and also a rotating file system which will delete the files when they grow
+bigger in size  
+-->but now this rotating file system is going to create multiple log file task basically when log file 
+reaches a specigfic size it will tranfer the set of logs to another and start filling this log file again
+from scratch
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+step 1:istall morgan to project
+npm install morgan 
+
+step 2: requiring morgan 
+const logger=require('morgan')
+
+
+step3:in environemnt.js we will define the settings 
+
+imporiting fs module as we are writing into filesystem
+cosnt fs=require('fs');
+const rfs=require('rotating-file-system)
+cosnt path=require('path)  //as we have to create path 
+
+
+
+//variable which defines where logs will be stored
+const logDirectory= path.join(__dirname,'../production_logs');
+
+
+//now i have to find if the production logs already exists or need to be created
+fs.existsSync(logDirectory)  || fs.mkdirSync(logDirectory);
+
+
+//rfs(name of the file,options)
+const accesLogStream=rfs.createStream('access.log',{
+interval:'1d',
+path:logDirectory  
+})
+
+
+
+step 5:  //defineing the things inside  environment also
+     morgan:{
+        mode:'dev',
+        options:{stream: accesLogStream}
+     }
+
+
+
+     step 6:using the logger in middleware
+app.use(logger(env.morgan.mode,env.morgan.options));

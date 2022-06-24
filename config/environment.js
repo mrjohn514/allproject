@@ -1,3 +1,28 @@
+//as we need to write into files
+const fs=require('fs');
+
+//requiring the rotate file system module
+const rfs=require('rotating-file-stream');
+
+//as we also need to tell paths so 
+const path=require('path');
+
+
+
+//variable which defines where logs will be stored
+const logDirectory= path.join(__dirname,'../production_logs');
+
+
+//now i have to find if the production logs already exists or need to be created
+fs.existsSync(logDirectory)  || fs.mkdirSync(logDirectory);
+
+
+//rfs(name of file,options)
+const accesLogStream=rfs.createStream('access.log',{
+interval:'1d',
+path:logDirectory  
+})
+
 
 
 //devlopment object
@@ -23,6 +48,16 @@ const development={
         google_callbackURL:"http://localhost:8000/user/auth/google/callback",
 
         jwt_secret_key:'codeial',
+
+
+     //defineing the things in environment also
+     morgan:{
+        mode:'dev',
+        options:{stream: accesLogStream}
+     }
+
+
+
 }
 
 
@@ -48,7 +83,15 @@ const production={
 
         google_callbackURL:process.env.CODEIAL_GOOGLE_CALLBACKURL,            //"http://codeial.com/user/auth/google/callback",
 
-        jwt_secret_key:process.env.CODEIAL_JWT_KEY                                     //'codeial',
+        jwt_secret_key:process.env.CODEIAL_JWT_KEY ,              //'codeial',
+
+        morgan:{
+            mode:'combined',
+            options:{stream: accesLogStream}
+         }
+    
+
+
 }
 
 

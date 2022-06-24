@@ -3,6 +3,8 @@ const express = require('express');
 //importing environement file 
 const env=require('./config/environment');
 
+const logger=require('morgan');
+
 //for reading and writing into cookies we are using library called cookie parser
 //step 1 : npm install cookie-parser
 //step 2: require the cookie-pareser library 
@@ -79,10 +81,22 @@ app.use(sassMiddleware({
 
 
 
+
+
+
+
+
 //we have to tell the app to use cookie parsr and we know the place to change the  upcoming data through req
 //can be alterd in middleware so 
 app.use(cookieParser());
 app.use(expresslayouts);  
+
+
+
+//using logger 
+app.use(logger(env.morgan.mode,env.morgan.options));
+
+
 
 
 app.set('layout extractStyles',true);
