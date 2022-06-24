@@ -6,6 +6,8 @@ const User=require('../../../models/user');
 const jwt=require('jsonwebtoken');
 
 
+const env=require('../../../config/environment')
+
 
 module.exports.createsession=async function(req,res)
 {
@@ -28,7 +30,7 @@ return res.json(422,{
 
         //founded user wil converted to json then this sign fucntion will ecncrypt this user using 
         //key codeial 
-          token: jwt.sign(user.toJSON(),'codeial',{expiresIn:'1000000'})         
+          token: jwt.sign(user.toJSON(),env.jwt_secret_key,{expiresIn:'1000000'})         
       }
       
   })

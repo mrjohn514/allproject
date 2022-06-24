@@ -1,0 +1,122 @@
+                    //optimising our project for production ready code//
+
+->as varioius our secret keys,names our not hidden we have to hind them we have to do various optimisations
+
+step 1 :creating environment.js file in config folder which will contain environments like
+development or production
+
+//devlopment object
+const development={
+    name:'development'
+}
+//producntion object
+const production={
+    name:'production'
+}
+//now only exporting development once production is completed we will export acc to need
+module.exports=development;
+
+
+step 2:importin this environment file in index.js
+const env=require('./cofig/environment')
+
+
+step 3:hiding the assets paths in index.js file 
+creating key in development object and accesing path from here
+const development={
+    name:'development',
+   asset_paht:'./assets'
+}
+and chaning in index.js file
+app.use(express.static(env.asset_path));
+
+
+step 4: now also we are assets over useing sassmiddleware so chaning over there also 
+so for that we need path module
+
+const paht =require('path')  (in index.js file)
+app.use(sassMiddleware({
+    src: path.join(__dirname,env.asset_path,'scss'),                  
+    dest: path.join(__dirname,env.asset_path,'css'),                  
+    outputstyle:'extended',
+    prefix:  '/css'
+    }));
+
+
+    step 5:hiding the session cookie secret 
+    const development={
+    name:'development',
+   asset_paht:'/assets',
+   session_cookie_key:'blahsomething'
+}
+
+chaning in index file
+app.use(session({
+  name:'codeial', 
+ secret: env.session_cookie_key,           
+saveUninitialized:false, 
+resave:false,
+cookie:{
+    maxAge:(1000*60*100)      
+},
+store: MongoStore.create({ mongoUrl: 'mongodb://localhost/codeial_development' })   
+}))
+
+
+
+step 6:hiding our db name
+adding key in development
+    const development={
+    name:'development',
+   asset_paht:'/assets',
+   session_cookie_key:'blahsomething',
+   db:'codeial_development
+}
+chaingin in mongoose file
+const env=require('./environment');
+mongoose.connect(`mongodb://localhost/${env.db}`);
+
+
+step 7:hiding nodemailer smptp object in producntion
+ smtp:{
+        service:'gamil',  
+        host:'smtp.gmail.com',             
+        port:587,                      
+        secure:false,
+        auth:{                          
+        user:'abubarwal786@gmail.com',
+        pass:'krhsmxawnvhwbiul' 
+        }
+        }
+
+using this key in nodemailer.js file
+let transporter =nodeMailer.createTransport(env.smtp)
+
+
+
+step 8:hidnng the goole client id secret in googleauth.js
+
+  google_clientID:"831968721597-pf1aq51goj4e78jgjkuebf754h8ga9vh.apps.googleusercontent.com",
+        google_clientSecret:"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",
+        google_callbackURL:"http://localhost:8000/user/auth/google/callback"
+
+using the keys in passport_googleauth.js file
+passport.use(new googlestrategy({
+clientID:env.google_clientID,
+clientSecret:env.google_clientSecret,
+callbackURL:env.google_callbackURL
+}
+
+
+step 9: hiding the secrets in jwtstrategy file
+jwt_secret_key:'codeial',
+
+chainging jwt file
+  secretOrKey:env.jwt_secret_key
+
+
+  step 10:also we have used this key inside userapi controller file so changing over there also
+    token: jwt.sign(user.toJSON(),env.jwt_secret_key,{expiresIn:'1000000'})    
+
+
+hence we are done with devoping our development 

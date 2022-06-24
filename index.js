@@ -1,5 +1,8 @@
 const express = require('express');
 
+//importing environement file 
+const env=require('./config/environment');
+
 //for reading and writing into cookies we are using library called cookie parser
 //step 1 : npm install cookie-parser
 //step 2: require the cookie-pareser library 
@@ -41,6 +44,7 @@ const customMware=require('./config/middleware');
 
 //telling to use socket file 
 const http = require('http');     //rquirng http module
+const path = require('path');
 const chatServer = http.createServer(app);  //passing our expres app toServer function
 
  //requinrg chatsocket.js file and passing this chatserver to fucntion in chatsocket.js file
@@ -51,11 +55,13 @@ chatServer.listen(5000);
 console.log("chatserver is listening on port 5000")
 
 
+console.log("asset path is",env.asset_path);
+
              /////using sasss in appp 
 app.use(sassMiddleware({
-    src: './assets/scss',                   //from whre do i pick up the scss files to convert into css
+    src:  path.join(__dirname,env.asset_path,'/scss'),                   //from whre do i pick up the scss files to convert into css
     
-    dest: './assets/css',                 //where do i have to put the converted scss filees(ie css files)
+    dest: path.join(__dirname,env.asset_path,'/css'),                 //where do i have to put the converted scss filees(ie css files)
     
     //debug mode is basically whatever info u see while server is running in terminal 
     //do i want to display some errors that are there in file during compilation when they are not able to convert scss file to css 
@@ -95,7 +101,7 @@ app.set('views', './views');
 
 app.use(session({
   name:'codeial',  ///name of cookie
- secret: 'blahsomething',            //whenever encryption happen ther is key to encode and decode    
+ secret: env.session_cookie_key,            //whenever encryption happen ther is key to encode and decode    
 saveUninitialized:false,  //whenever thre is req which is not initialised ->means when teh user is not loged in identity is not establish
 //so i dont want to store extra data so set to false
 
@@ -103,7 +109,7 @@ resave:false,  //when the identity is established or some sort of session data/u
 cookie:{
     maxAge:(1000*60*100)      //for how much millisec cookie live
 },
-store: MongoStore.create({ mongoUrl: 'mongodb://localhost/codeial_development' })   //adding store property as mongostore
+store: MongoStore.create({ mongoUrl:`mongodb://localhost/${env.db}` })   //adding store property as mongostore
 
 }))
 
@@ -136,7 +142,7 @@ app.use('/', require('./routes'));
 
 
 // to use static files, present in assets directory
-app.use(express.static('assets'));
+app.use(express.static(env.asset_path));
 
 
 //make the uploads path available to the browser

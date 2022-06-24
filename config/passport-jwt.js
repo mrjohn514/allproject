@@ -12,6 +12,13 @@ const Extractjwt=require('passport-jwt').ExtractJwt;
 const User=require('../models/user'); 
 
 
+const env=require('./environment');
+
+console.log("jwt key is ",env.jwt_secret_key);
+
+
+
+
 //while defineing strategy i will have some options
 //first how do i encrypt 
 
@@ -20,7 +27,7 @@ let opts={
  //authorisation that is also a list ofkey that can have key called bearer now that bearer will have
 //jwt token   
     jwtFromRequest:Extractjwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey:'codeial'   
+    secretOrKey:env.jwt_secret_key   
     
 }
 

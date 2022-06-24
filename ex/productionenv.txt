@@ -1,0 +1,79 @@
+now seting our project for producion environment the only differnce between devopoment env and 
+producion env is like the devopomentenv we can see all the value of keys made example      jwt_secret_key:'codeial',
+iam able to see the value of jwt_secret_key so  all of these will be store  somewhre on file in my
+system and that file will be acces by this code so that any devleoper do not get access to these keys
+
+
+
+
+now in windows the setting is differnet 
+
+step 1 : set the environment variables go to system variables in windows  and set all the
+hiiden key value pairs there
+
+CODEIAL_ASSET_PATH : ./assets
+CODEIAL_SESSION_KEY :'blahsomething'
+CODEIAL_DB : production_development
+CODEIAL_GMAIL_USERNAME :'abubarwal786@gmail.com'
+CODEIAL_GMAIL_PASSWORD :'krhsmxawnvhwbiul'
+CODEIAL_GOOGLE_CLIENTID :
+CODEIAL_GOOGLE_CLIENTSECRET :
+CODEIAL_GOOGLE_CALLBACKURL:
+CODEIAL_JWT_KEY:  'codeial'
+
+
+step2:now in project we can access these variables by using process.env
+basically evn is object of proces which has all environment variables  env={ var1:  var2:   }
+
+
+
+step 3:fill the production environment object in environment.js file
+const production={
+    name:'production',
+    asset_path:process.env.CODEIAL_ASSET_PATH,                              //'./assets'
+    session_cookie_key:process.env.CODEIAL_SESSION_COOKIE_KEY,                 //'blahsomething'
+    db:process.env.CODEIAL_DB,                                               // 'codeial_production'
+    smtp:{
+        service:'gamil',  
+        host:'smtp.gmail.com',             
+        port:587,                      
+        secure:false,
+        auth:{                          
+        user:process.env.CODEIAL_GMAIL_USERNAME,                                                         //'abubarwal786@gmail.com',
+        pass:process.env.CODEIAL_GMAIL_PASSWORD                                                          //'krhsmxawnvhwbiul' 
+        }
+        },
+       google_clientID:process.env.CODEIAL_GOOGLE_CLIENTID,                  //"831968721597-pf1aq51goj4e78jgjkuebf754h8ga9vh.apps.googleusercontent.com",
+
+        google_clientSecret:process.env.CODEIAL_GOOGLE_CLIENTSECRET,        // "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",
+
+        google_callbackURL:process.env.CODEIAL_GOOGLE_CALLBACKURL,            //"http://codeial.com/user/auth/google/callback",
+
+        jwt_secret_key:process.env.CODEIAL_JWT_KEY                                     //'codeial',
+}
+
+
+step 5:
+also we have added another varibale which tell environment is producion
+basically addeed  CODEIAL_ENVIRONMENT:producion
+
+if condition alos added so to export either devlopment environment or  producion environment
+if(eval(process.env.CODEIAL_ENVIRONMENT)!=undefined)
+{
+  module.exports=production;  
+}
+
+else
+{
+    module.exports=development;
+}
+
+
+step 6: for windows we have ot add
+also have to do some changes in josn file to run producion environment basically we addeed
+"scripts": {
+    "prod_start": "SET NODE_ENV=production & nodemon index.js"
+  }
+
+
+  //setting node_env=production which tells  node is running production code 

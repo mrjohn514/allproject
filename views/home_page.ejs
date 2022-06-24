@@ -98,6 +98,14 @@
     });
 </script>
 
+
+<script
+type="text/javascript"
+src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js"
+></script>
+
+
+
 <!-- cdn of socket.io basically getting library of socket.io at frontend -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
 <!-- this chat_engine.js is the file communicating from the client side (user on the brower) -->
@@ -108,6 +116,7 @@
 <!-- creating a object of chatengine class only if user is signin we dont want random user to send msg -->
 <%if(locals.user){%>
 <script>
+
  //creating new object passing the chatbox id and user email   
 new chatEngine('chatcontainer','<%=locals.user.email%>','<%=locals.user.name%>');
 </script>

@@ -6,6 +6,8 @@ const ejs=require('ejs');
 
 const path=require('path');
 
+//requiring environment
+const env=require('./environment');
 
 
 // transport is a transport object created from the  nodemailer.createTransport method
@@ -13,30 +15,7 @@ const path=require('path');
 //nodemailer.createTransport(type, options) where type indicates transport protocol used 
 //and options define how it is used 
 
-let transporter =nodeMailer.createTransport({
-
-//seting up smtp options on how it is used 
-
-service:'gamil',  //) option to auto-configure host, port and secure connection settings
-host:'smtp.gmail.com',                 //hostname of the SMTP server
-port:587,                       //port of the SMTP server
-
-//secureConnection - use SSL (default is false , not needed with service ). If
-//you're using port 587 then keep secureConnection false, since the connection is
-//started in insecure plain text mode and only later upgraded with STARTTLS
-
-secure:false,
-
-//you have to establish the identity with which you are sendin emails 
-//if u dont do this anyone could use gmail to send mail from anyone to anyone (to stop spamming / to charge if sending more mails/day) 
-auth:{                             //auth - authentication object as {user:"...", pass:"..."} 
-user:'abubarwal786@gmail.com',
-pass:'krhsmxawnvhwbiul' 
-
-}
-
-
-})
+let transporter =nodeMailer.createTransport(env.smtp)
 
 
 
