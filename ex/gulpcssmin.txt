@@ -242,3 +242,7 @@ so we will use helpers to solve our problem
 
 --->what is helper: they are basically function which are used in views and how can be use them in views
 by passing them in locals
+
+
+
+

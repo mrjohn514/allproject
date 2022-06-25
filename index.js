@@ -16,6 +16,12 @@ const port = 8000;
 
 
 const app = express();
+
+//require the helper and passing app to it
+///as i have passed the app my locals will have assetpath funcion availble in views
+require('./config/view-helper')(app);
+
+
 const expresslayouts=require('express-ejs-layouts');
 
 const db= require('./config/mongoose')

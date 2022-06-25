@@ -1,1 +1,118 @@
-body{font-family:Lucida Sans,Lucida Sans Regular,Lucida Grande,Lucida Sans Unicode,Geneva;margin:0}.leftbar h1,.leftbar p{margin:0;font-size:1.8rem;color:#fff}.content h1{color:#fff}header{position:sticky;top:0}.navbar{height:55px;align-items:center;background:linear-gradient(104deg,#2d2c2e 11%,#7f7e82 86%,#010f13 99%)}.maincontainer,.navbar{display:flex;justify-content:space-between}.maincontainer{width:100%}.content{width:70%;text-align:center;height:700px;background-image:url(https://assets.justinmind.com/wp-content/uploads/2020/02/website-background-design-guide-768x492.png);background-position:50%;background-repeat:no-repeat;background-size:cover}.content,.right{box-sizing:border-box}.right{width:26%;height:650px;box-shadow:2px 2px 8px 7px #cbc1e8;margin-top:15px;margin-right:13px;display:flex;flex-direction:column}.right .chip img{border-radius:50%;width:40px;height:40px}.chip{margin:4px 0;background:linear-gradient(90deg,#020024,#090979 35%,#00d4ff)}.footercontainer{display:flex;justify-content:space-between;align-items:center;height:55px;background:linear-gradient(104deg,#1b2467 11%,#cac3e0 86%,#2d359e 99%)}.footercontainer a{font-size:1.5rem}.post{background-color:#f9f6f6;width:100%;height:600px;display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-around;align-content:stretch}.postcard{display:flex;flex-direction:column;justify-content:space-between;text-align:left;box-sizing:border-box;box-shadow:0 0 5px 4px #de8ac0;border-radius:10px;background:linear-gradient(90deg,#833ab4,#fd1d1d 50%,#fcb045)}.postcard p{font-size:1.8rem;color:#fff}#like-count,#like-link{display:inline-block;font-size:1.2rem}#alllikes,.toggle-like-button{font-size:.8rem}.postcontent{margin-bottom:25px}.uname{margin:0;font-size:1.2rem!important}.post-comments-list p{font-size:1rem;margin:0}#new-friend-btn{display:none}
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva;
+  margin: 0; }
+
+.leftbar h1, .leftbar p {
+  margin: 0;
+  font-size: 1.8rem;
+  color: white; }
+
+.content h1 {
+  color: white; }
+
+header {
+  position: sticky;
+  top: 0; }
+
+.navbar {
+  height: 55px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(104deg, #2d2c2e 11%, #7f7e82 86%, #010f13 99%); }
+
+.maincontainer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between; }
+
+.content {
+  width: 70%;
+  text-align: center;
+  box-sizing: border-box;
+  height: 700px;
+  background-image: url("https://assets.justinmind.com/wp-content/uploads/2020/02/website-background-design-guide-768x492.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; }
+
+.right {
+  box-sizing: border-box;
+  width: 26%;
+  height: 650px;
+  box-shadow: 2px 2px 8px 7px #cbc1e8;
+  margin-top: 15px;
+  margin-right: 13px;
+  display: flex;
+  flex-direction: column; }
+  .right .chip img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px; }
+
+.chip {
+  margin: 4px 0px;
+  background: linear-gradient(90deg, #020024 0%, #090979 35%, #00d4ff 100%); }
+
+.footercontainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 55px;
+  background: linear-gradient(104deg, #1b2467 11%, #cac3e0 86%, #2d359e 99%); }
+  .footercontainer a {
+    font-size: 1.5rem; }
+
+.post {
+  background-color: #f9f6f6;
+  width: 100%;
+  height: 600px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  align-content: stretch; }
+
+.postcard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  box-sizing: border-box;
+  -webkit-box-shadow: 0px 0px 5px 4px #de8ac0;
+  -moz-box-shadow: 0px 0px 5px 4px #de8ac0;
+  box-shadow: 0px 0px 5px 4px #de8ac0;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%); }
+  .postcard p {
+    font-size: 1.8rem;
+    color: white; }
+
+#like-link {
+  display: inline-block;
+  font-size: 1.2rem; }
+
+#like-count {
+  display: inline-block;
+  font-size: 1.2rem; }
+
+#alllikes {
+  font-size: 0.8rem; }
+
+.toggle-like-button {
+  font-size: 0.8rem; }
+
+.postcontent {
+  margin-bottom: 25px; }
+
+.uname {
+  margin: 0;
+  font-size: 1.2rem !important; }
+
+.post-comments-list p {
+  font-size: 1rem;
+  margin: 0; }
+
+#new-friend-btn {
+  display: none; }

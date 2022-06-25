@@ -1,5 +1,5 @@
 
-<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="<%=locals.assetPath('css/home.css')%>">
 <div class="maincontainer">
     
         <div class="content">
@@ -87,9 +87,9 @@
     <%}%>
 
 
-<script src="/js/home_post.js"></script>
-<script src="/js/post_comment.js"></script>
-<script src="/js/mylike.js"></script>
+<script src="<%=locals.assetPath('js/home_post.js')%>"></script>
+<script src="<%=locals.assetPath('js/post_comment.js')%>"></script>
+<script src="<%=locals.assetPath('js/mylike.js')%>"></script>
 <script>
     $('.toggle-like-button').each(function(){
         let self = this;
@@ -110,7 +110,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js"
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
 <!-- this chat_engine.js is the file communicating from the client side (user on the brower) -->
 <!-- and socket.js in config folder wil communicate from server side  bascially the observer -->
-<script src="/js/chat_engine.js"></script>  
+<script src="<%=locals.assetPath('js/chat_engine.js')%>"></script>  
 
 
 <!-- creating a object of chatengine class only if user is signin we dont want random user to send msg -->

@@ -102,7 +102,7 @@ console.log("jwt key is",process.env.CODEIAL_JWT_KEY);
 
 //now only exporting development once production is completed we will export acc to need
 // module.exports=eval(process.env.CODEIAL_ENVIRONMENT)== undefined ? development : eval(process.env.CODEIAL_ENVIRONMENT)  ;
-if(eval(process.env.CODEIAL_ENVIRONMENT)!=undefined)
+if(eval(process.env.CODEIAL_ENVIRONMENT)==undefined)
 {
   module.exports=production;  
 }
