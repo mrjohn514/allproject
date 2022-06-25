@@ -1,0 +1,115 @@
+with enviroment settup is optimising our assets 
+
+-->assets are static files first we need to compres them before sending from server to browser
+as compresed file will be sent faster and easy
+-->as we have seen mincss and minjs files api these are compresd files  wehre any extra space reamvoed there
+varialbe name shortened no new lines etc.
+
+
+-->collecting all the things which can be optimise (in terms of assets and minmisiing them)
+whenever iam sending an assett  iam going to send a timehash (string attach to its name )just to 
+differntiate it from previous version of asset that is already be with browser in cache
+which means some of css and images are cached within the browser so i need to refresh those so what i can 
+do is i wil rename file every time iam accesing it
+
+
+-->what is happening is whenever my server sending responce the browser will store the static files
+like images ,css,js in local storage and every time you fetch that website again and again it loads 
+faster due to this local caching but if you have updated lets say image or css then the results of 
+update will not shown to user as browser will render the local stored files so to remove this concept
+every time we add a hash with file name every time file name is changed browser will not look into local 
+storage it will fetch form server so we use gulp
+
+
+
+-->for above things i will use gulp  what gulp is doing is it comprese the files and if u want 
+to rename file aand add hash to it 
+
+
+
+-------------------------------------------------------------------------------------------------------------
+step 1:creating gulpfile.js file in main 
+//require gulp libraray
+const gulp = require('gulp');
+
+//now this gulp libraray have smaller libraries builit in like for minifying css
+//for converting sass to css
+//for js there is another libraray
+
+
+//requirng gulp-sass this library will convert the sass files into css
+const sass=require('gulp-sass');
+
+
+//requring gulp-cssnano this libraray will convert the (converted sass file to css) css file to  one line code
+//basically compres the css files
+const cssnano=require('gulp-cssnano')
+
+
+//another libarary which will help in renaming files to remove broser caching problem  lets say name
+//of file is home.css it attach a hash like home_1334.css so that whenever it sent to browesr then browesr
+//will not find in local storage and have to fetch from server so changes will reflect in page
+
+const rev=require('gulp-rev');
+
+
+//now gulp  contains tasks which need to be created when we use gulp 
+//first task minifying tasks we name it css   gulp.task(taskname,callback fxn)
+
+gulp.task('css',function(){
+console.log("minifying css")
+
+//gulp.src method tells the Gulp task what files to use for the task
+//** means any folder within scss 
+//* any  file inside scss with name .scss
+
+gulp.src('./assets/scss/**/*.scss')
+//the above file need to be pass to gulp sass module so we use pipe method 
+//which sends files to gulp-sass module
+.pipe(sass()) 
+
+//now i send the above converted sass file in css to compression moudle (gulp-cssnano) 
+.pipe(cssnano())
+
+//now i need to send the output files to destination 
+.pipe(gulp.dest('./assets/css'))
+
+
+})
+
+
+
+step 2:for the produciotn mode we will change the assets path 
+we create pulblic folder whcih contain the public->assets ->css,js,images
+
+
+step 3:also changing enviroment varialbe for assets 
+CODEIAL_ASSET_PATH:"./public/assets"
+
+
+
+step 4: also added more gulp functions  in gulpfile.js
+.pipe(rev.manifest({
+
+    //cwd is public because iam taking everything from public
+    //this cwd if not defined properly default manifest file saves in main directory
+  cwd:'public',
+  
+//if i have already manifest.json file present and i created new css file zoro.css then if i run 
+//gulp css due to mrege true the  mapping of this zoro.css will done in existing manifest.json file
+  merge:true  
+}))  
+
+//putting the created manifest in destination
+//without this manifest.json is not creating but renamed files is saving in css folder
+//when i put ./public manifest file saved in main
+//wheni put   ./public/assets then file saved inside public
+.pipe(gulp.dest('./public/assets'));
+
+
+
+-----------------------------------------------------------------------------------------------------------
+creating task for minifying js files
+
+step 1:installing uglify libraray
+npm install gulp-uglify
