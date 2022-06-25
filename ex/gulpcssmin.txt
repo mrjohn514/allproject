@@ -88,7 +88,7 @@ CODEIAL_ASSET_PATH:"./public/assets"
 
 
 
-step 4: also added more gulp functions  in gulpfile.js
+step 4: also added more gulp functions  in gulpfile.js task css 
 .pipe(rev.manifest({
 
     //cwd is public because iam taking everything from public
@@ -113,3 +113,132 @@ creating task for minifying js files
 
 step 1:installing uglify libraray
 npm install gulp-uglify
+
+step2:using uglify
+const uglify=require('gulp-uglify-es').default;
+
+step 3:creating gulp task for js 
+///task 2 minifying js 
+
+gulp.task('js',function(done){
+
+console.log("minifying js");
+
+gulp.src('./assets/**/*.js')          //any folder name js or file name js
+.pipe(uglify())        //uglifyed
+.pipe(rev())            //renaming
+.pipe(gulp.dest('./public/assets'))    //saving renamed files in destination
+.pipe(rev.manifest({
+ cwd:'public',
+ merge:true
+
+}))
+.pipe(gulp.dest('./public/assets'))
+done();
+})
+
+-----------------------------------------------------------------------------------------------------
+creating task for minifying images 
+
+step 1:import the libarary gulp-minimage
+npm install --save-dev gulp-imagemin@7.1.0
+
+
+step 2 :require libarary
+//requiring gulp lib for image minification
+const imagemin=require('gulp-imagemin');
+
+
+step 3:crearing task for minfying image
+gulp.task('images',function(done){
+
+console.log('compressing images');
+
+gulp.src('./assets/images/**/*.+(png||jpg||gif||svg||jpeg)')
+.pipe(imagemin())
+.pipe(rev())
+.pipe(gulp.dest('./public/assets/images'))
+.pipe(rev.manifest({
+ cwd:'public',
+ merge:true
+
+}))
+.pipe(gulp.dest('./public/assets'))
+done();
+
+
+})
+
+
+
+---------------------------------------------------------------------------------------------------------
+creating task for clearing assets every time 
+
+step1: insatll library
+npm install del 
+
+step 2:using libarary
+const del =require('del')
+
+step 3 creatin task
+///gulp task 4  empty the public assets directory 
+//whenever you are building project you need to clear previous build and build it from scratch 
+
+gulp.task('clean:assets',function(done){
+
+del.sync('./public/assets');
+done();
+
+})
+-------------------------------------------------------------------------------------------------
+
+creeating one task to run all above tasks independenyly
+//task 5 since all above tasks are needed to run independently i have created task called build
+//which will run all four these serially 
+
+
+gulp.task('build',gulp.series('clean:assets','css','js','images'),function(done){
+
+console.log("building assets");
+done();
+
+
+})
+-----------------------------------------------------------------------------------------------------
+
+
+done also for running gulp task in console we have to add command line interfase for gulp
+so add it by comand 
+npm install gulp-cli -g
+
+
+now you can run the gulp task in comandline
+like
+
+gulp css
+gulp js
+gulp build -->whidh runns all the tasks
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------
+
+upto here if we run our webiste then in devlopers mode  we will see
+home.css
+header.css
+layout.css
+footer.css
+chatbox.css   
+all files missing because home.css is not present we have home-eaa7bc9716.css in specified path 
+
+as we are running in developmet mode here CODEIAL_ASSET_PATH : ./public/assets 
+and here we have home-eaa7bc9716.css this not home.css file which linked in ejs files  <link rel="stylesheet" href="/css/home.css">
+
+
+so we will use helpers to solve our problem
+
+--->what is helper: they are basically function which are used in views and how can be use them in views
+by passing them in locals

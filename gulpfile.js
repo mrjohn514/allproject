@@ -23,12 +23,32 @@ const rev=require('gulp-rev');
 
 
 
-//now gulp  contains tasks which need to be created when we use gulp 
+//requing gulp library for minifying js 
+const uglify=require('gulp-uglify-es').default;
+
+
+
+
+
+//requiring gulp lib for image minification
+const imagemin=require('gulp-imagemin');
+
+
+
+
+//lib to clear/delte the assets folder
+const del=require('del');
+
+
+
+
+
+                    //now gulp  contains tasks which need to be created when we use gulp 
 
 
 //first task minifying tasks we name it css   gulp.task(taskname,callback fxn)
 
-gulp.task('css',function(){
+gulp.task('css',function(done){
 console.log("minifying css")
 
 //gulp.src method tells the Gulp task what files to use for the task
@@ -49,7 +69,7 @@ gulp.src('./assets/scss/**/*.scss')
 
 //now we need to add hash basiclaly naming of files 
 //now after above line ./assets/css will have all css files init now adding hash to these files
-return gulp.src('./assets/**/*.css')
+gulp.src('./assets/**/*.css')
 
 //sending the above files to  gulp rev module for adding hash to their names  (renaming)
 .pipe(rev())
@@ -88,8 +108,85 @@ return gulp.src('./assets/**/*.css')
 //wheni put   ./public/assets then file saved inside public
 .pipe(gulp.dest('./public/assets'));
 
-
+done();
 
 
 })
 
+
+
+
+///task 2 minifying js 
+
+gulp.task('js',function(done){
+
+console.log("minifying js");
+
+gulp.src('./assets/**/*.js')          //any folder name js or file name js
+.pipe(uglify())        //uglifyed
+.pipe(rev())            //renaming
+.pipe(gulp.dest('./public/assets'))    //saving renamed files in destination
+.pipe(rev.manifest({
+ cwd:'public',
+ merge:true
+
+}))
+.pipe(gulp.dest('./public/assets'))
+
+done();
+
+
+})
+
+
+
+
+//////////////gulp task 3
+
+gulp.task('images',function(done){
+
+console.log('compressing images');
+
+gulp.src('./assets/images/**/*.+(png||jpg||gif||svg||jpeg)')
+.pipe(imagemin())
+.pipe(rev())
+.pipe(gulp.dest('./public/assets/images'))
+.pipe(rev.manifest({
+ cwd:'public',
+ merge:true
+
+}))
+.pipe(gulp.dest('./public/assets'))
+done();
+
+
+})
+
+
+
+
+
+///gulp task 4  empty the public assets directory 
+//whenever you are building project you need to clear previous build and build it from scratch 
+
+gulp.task('clean:assets',function(done){
+
+del.sync('./public/assets');
+done();
+
+})
+
+
+
+
+//task 5 since all above tasks are needed to run independently i have created task called build
+//which will run all four these serially 
+
+
+gulp.task('build',gulp.series('clean:assets','css','js','images'),function(done){
+
+console.log("building assets");
+done();
+
+
+})
